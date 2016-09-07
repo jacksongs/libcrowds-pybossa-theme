@@ -8,11 +8,7 @@
         <div class="col-md-11">
             <h1 class="inset-text-grey">About</h1>
             <p class="lead">
-            	{{ brand }} is a platform built by <a href="https://github.com/alexandermendes" target="_blank">Alexander Mendes</a>,
-            	in association with <a href="http://labs.bl.uk/" target="_blank">BL Labs</a>. It aims to create searchable catalogue
-            	records for some of the hundreds of thousands of items that can only be found in printed and card catalogues. By
-            	participating in the crowdsourcing projects hosted here, you will help researchers everywhere to access our
-            	collections more easily in the future.
+            	{{ brand }} is a project from Sarah Martin and Jackson Gothe-Snape, that aims to fix Australia's Federal Parliamentarians' Interest Register. By crowdsourcing the transcription of thousands of pages of handwritten PDFs, {{ brand }} will make the Interests Register searchable for the first time. The project will also bring
             </p>
         </div>
     </div>
@@ -21,26 +17,36 @@
 <section class="white">
     <div class="container container-padded">
         <div class="col-md-11 padding-bottom-sm">
-            <h2>Featured Project Series: Convert-a-Card</h2>
+            <h2>Why is this important?</h2>
             <p>
-                In our first project series, Convert-a-Card, we're experimenting with a new method for transforming printed card
-                catalogues into electronic records for inclusion in our online catalogue <a href="http://explore.bl.uk/">Explore</a>.
+                Right now, this is how you check to see whether a company has had any dealings with an MP or Senator:
+                <ul>
+                <li>Check the Senate and House of Representatives websites for recent declarations.</li>
+                <li>Read every PDF listed - including those with illegible handwriting.</li>
+                <li>Personally visit the Table Office in Parliament House in Canberra to get archived entries in hard copy form.</li>
+                <li>Weep into the mountain of paper now strewn across your desk.</li>
+                </ul>
             </p>
             <p>
-                While the <a href="http://www.bl.uk/aboutus/quickinfo/facts/history/" target="_blank">British Library</a> is
-                relatively young for a national library, much of its vast historical collections were acquired long before computers
-                were used for cataloguing as standard. So, while the library's online catalogue,
-                <a href="http://explore.bl.uk/" target="_blank">Explore</a>, provides public access to nearly 57 million records,
-                there are still thousands of important research items that can only be found by searching the old physical card catalogues.
+                Australia's elected representatives become embroiled in scandal after scandal. 
+                Yet declining resources in journalism mean information in the Interest Register remains locked.
+                How many conflicts of interest have been ignored?
             </p>
             <p>
-                Records matched, located, transcribed or translated as part of Convert-a-Card will be uploaded to the
-                <a href="http://explore.bl.uk/" target="_blank">British Library's Explore catalogue</a> for anyone to search online.
-                By participating you will have a direct impact on the availability of research material to anyone interested in the
-                diverse collections available at the British Library.
+                But in every entry recorded over the years, what was left unwritten?
+                Should the fact that declared bottles of wine were actually Grange Hermitage be disclosed?
+                And should they be disclosed in real-time, when potential conflicts may be in the news?
+                To address the questions, {{ brand }} lobby our politicians for a new regime of declarations which is:
+                <ul>
+                <li>freshly clarified,</li>
+                <li>real-time,</li>
+                <li>categorised,</li>
+                <li>standardised, and</li>
+                <li>digital.</li>
+                </ul>
             </p>
             <div class="text-center">
-                <a href="{{url_for('project.index')}}" class="btn btn-danger">Get Started</a>
+                <a href="{{url_for('project.index')}}" class="btn btn-danger">I'm on board. Let's do this.</a>
             </div>
         </div>
     </div>
@@ -51,16 +57,16 @@
         <div class="col-md-11 padding-bottom-sm">
             <h2>Technology</h2>
             <p>
-                LibCrowds is built on top of <a href="http://docs.pybossa.com/"> PyBossa </a>, an open-source Python framework for the creation of
+                {{ brand }} is built on top of <a href="http://docs.pybossa.com/"> PyBossa </a>, an open-source Python framework for the creation of
                 crowdsourcing projects. PyBossa is written in Python and uses the <a href="http://flask.pocoo.org/">Flask</a> micro-framework. Each
                 project on the platform is written in a combination of HTML, CSS and Javascript. {% if 'pybossa_discourse' in plugins %} The
-                community forum is powered by <a href="https://www.discourse.org/">Discourse</a>.{% endif %} The
-				<a href="https://github.com/LibCrowds/libcrowds-pybossa-theme" target="_blank">LibCrowds theme</a> and any plugins developed to
+                community forum is powered by <a href="https://www.discourse.org/">Discourse</a>.{% endif %} {{brand}} also uses a modified version of the
+				<a href="https://github.com/LibCrowds/libcrowds-pybossa-theme" target="_blank">LibCrowds theme</a>. Any plugins developed to
 				provide additional functionality are open-souce and available on GitHub.
             </p>
             <p>
                 {% if plugins %}
-                    LibCrowds is currently running the following plugins:
+                    {{brand}} is currently running the following plugins:
                     <ul class="no-style">
                     {% for p in plugins.values() %}
 						{% if p.name %}
@@ -93,7 +99,7 @@
             <h2>Contact information</h2>
             <ul class="no-style">
                 {% if 'pybossa_discourse' in plugins %}
-                <li>Visit the <a href="{{url_for('discourse.index')}}">LibCrowds Community</a> for more information or to report any issues.</li>
+                <li>Visit the <a href="{{url_for('discourse.index')}}">BURN THE REGISTER Community</a> for more information or to report any issues.</li>
                 {% else %}
                 <li><a href="mailto:{{contact_email}}">Email us</a> for more information.</li>
                 {% endif %}
