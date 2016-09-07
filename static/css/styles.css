@@ -2345,7 +2345,6 @@ img.img-polaroid {
         font-size: 1.2em;
         white-space: nowrap;
         width: 100%;
-        overflow: hidden;
         text-overflow: ellipsis;
     }
     .splash h2 {
