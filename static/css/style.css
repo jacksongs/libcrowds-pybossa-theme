@@ -318,4 +318,4 @@ only screen and (                min-resolution: 2dppx) {
 
 h5 { margin-top: 5px; margin-bottom: 5px }
 
-ul { text-align: left }
+ul { text-align: left; padding-left: 10px }
