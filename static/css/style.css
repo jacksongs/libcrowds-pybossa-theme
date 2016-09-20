@@ -319,3 +319,6 @@ only screen and (                min-resolution: 2dppx) {
 h5 { margin-top: 5px; margin-bottom: 5px }
 
 ul { text-align: left; padding-left: 10px }
+
+.navbar-nav > li > a {padding-top:2px !important; padding-bottom:2px !important;}
+.navbar {min-height:20px !important}
