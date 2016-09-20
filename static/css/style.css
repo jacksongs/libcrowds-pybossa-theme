@@ -324,7 +324,12 @@ ul { text-align: left; padding-left: 10px }
     padding-top:5px !important; padding-bottom:0 !important;
     height: 30px;
 }
-.navbar {min-height:30px !important; padding-top: 3px; padding-bottom: 3px}
+.navbar {min-height:30px !important; }
+
+.navbar-fixed-top.opaque {
+	padding-top: 3px; 
+	padding-bottom: 3px
+}
 
 .navbar-header > button {
 	padding-top: 0px;
