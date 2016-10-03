@@ -10,7 +10,7 @@
 {% set has_splash = "true" %}
 <div class="splash" style="background-image: url('{{ project.info['splash'] }}');">
 {% else %}
-    <div style="height:55vh;">
+    <div style="height:60vh;">
 {% endif %}
 
     <div class="vcenter hcenter position-relative" style="height:100%;">
@@ -46,12 +46,12 @@
 
     <div class="container container-padded">
         <div class="col-xs-8 col-xs-offset-2">
-            <div class="row text-center container-padded">
-                {{ project.info['tutorial_video']|safe }}
-            </div>
             {% if project.long_description %}
                 {{ project.long_description | e | markdown }}
             {% endif %}
+            <div class="row text-center container-padded">
+                {{ project.info['tutorial_video']|safe }}
+            </div>
             <div class="row text-center padding-top-xs">
                  <a href="{{ url_for('project.presenter', short_name=project.short_name)}}" class="btn btn-danger"> Contribute now</a>
             </div>
