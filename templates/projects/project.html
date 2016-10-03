@@ -52,6 +52,9 @@
             {% if project.long_description %}
                 {{ project.long_description | e | markdown }}
             {% endif %}
+            <div class="row text-center padding-top-xs">
+                 <a href="{{ url_for('project.presenter', short_name=project.short_name)}}" class="btn btn-danger"> Contribute now</a>
+            </div>
         </div>
     </div>
 </section>
@@ -64,10 +67,7 @@
             <div class="row">
                 {% if overall_progress < 100 %}
                 <h2>Get involved</h2>
-                <p>Your contributions will have a direct impact on enabling future reasearch at the British Library.<p>
-                <div class="row text-center padding-top-xs">
-                    <a href="{{ url_for('project.presenter', short_name=project.short_name)}}" class="btn btn-danger"> Contribute now</a>
-                </div>
+                <p>Your contributions will have a direct impact on Parliamentary transparency.<p>
                 {% else %}
                 <h2>Many thanks to all those that helped us complete this project!</h2>
                 <p>Click below to find an active project<p>
