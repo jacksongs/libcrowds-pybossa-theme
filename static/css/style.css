@@ -201,23 +201,22 @@ form.registration-form fieldset {
 	margin-top: 5px;
 }
 
+#qs {
+	height: 350px;
+	text-align: center;
+}
+
 /***** Media queries *****/
 
 @media (min-width: 992px) and (max-width: 1199px) {
 	.panzoom {
 		height: 80vh;
 	}
-	.textarea {
-		height: 250px;
-	}
 }
 
 @media (min-width: 768px) and (max-width: 991px) {
 	.panzoom {
 		height: 60vh;
-	}
-	.textarea {
-		height: 130px;
 	}
 }
 
@@ -238,9 +237,6 @@ form.registration-form fieldset {
 	.panzoom {
 		height: 50vh;
 	}
-	.textarea {
-		height: 130px;
-	}
 }
 
 @media (max-width: 415px) {
@@ -254,9 +250,6 @@ form.registration-form fieldset {
 		padding-right: 0px;
 		padding-top: 1px;
 		padding-bottom: 1px;
-	}
-	.textarea {
-		height: 130px;
 	}
 }
 
