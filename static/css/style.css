@@ -216,7 +216,7 @@ form.registration-form fieldset {
 
 @media (min-width: 768px) and (max-width: 991px) {
 	.panzoom {
-		height: 60vh;
+		height: 65vh;
 	}
 }
 
@@ -235,7 +235,7 @@ form.registration-form fieldset {
 	.form-bottom { padding-bottom: 25px; }
 	form .form-bottom button.btn { margin-bottom: 5px; }
 	.panzoom {
-		height: 50vh;
+		height: 65vh;
 	}
 }
 
@@ -243,7 +243,7 @@ form.registration-form fieldset {
 
 	h1, h2 { font-size: 32px; }
 	.panzoom {
-		height: 40vh;
+		height: 65vh;
 	}
 	.container {
 		padding-left: 0px;
