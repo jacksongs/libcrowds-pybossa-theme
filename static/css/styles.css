@@ -539,6 +539,22 @@ hr.extra-margins {
     z-index: 9999;
 }
 
+.sentry-error-embed.clearfix {
+    margin-top: 100px;
+    padding: 20px;
+}
+
+.sentry-error-embed .message-success:before {
+    content: "Thanks for the feedback! ";
+    color: #a2c098;
+    font-size: 22px;
+    font-weight: 400;
+}
+
+.sentry-error-embed .message-success {
+    padding: 15px 30px;
+}
+
 thead {
     background: rgba(0, 0, 0, 0.15)
 }
@@ -689,7 +705,7 @@ thead {
 
 h1, .h2, .h3, .h4, .h5, .h6,
 h1, h2, h3, h4, h5, h6 {
-    font-weight: 200
+    font-weight: 300
 }
 
 .h1, .h2, .h3, h1, h2, h3 {
@@ -1016,7 +1032,8 @@ h1 i, h2 i, h3 i {
 }
 
 .bs-docs-sidenav li.nav-link {
-    margin-bottom: 5px
+    margin-bottom: 5px;
+    display: block;
 }
 
 .bs-docs-sidenav li > a {
@@ -1155,7 +1172,11 @@ h1 i, h2 i, h3 i {
         padding-right: 15px!important
     }
     .bs-docs-sidenav.affix {
-        display: none;
+        position: relative;
+        width: 100%;
+    }
+    .bs-docs-sidenav li.nav-link {
+        display: inline-block;
     }
 }
 
@@ -1716,6 +1737,13 @@ input[type="radio"] + label {
     cursor: pointer
 }
 
+a.anchor {
+    display: block;
+    position: relative;
+    top: -90px;
+    visibility: hidden;
+}
+
 .btn-circle {
     z-index: 1;
     width: 90px;
@@ -2097,6 +2125,67 @@ input[type="radio"] + label {
 .badge-success-inverse {
     background-color: #fff;
     color: #2B9884;
+}
+
+
+/* Callouts */
+
+.bs-callout {
+    padding: 20px;
+    margin: 20px 0;
+    border: 1px solid #ccc;
+    border-left-width: 5px;
+    border-radius: 3px;
+}
+.bs-callout h4 {
+    margin-top: 0;
+    margin-bottom: 5px;
+    font-weight: 400;
+}
+.bs-callout p:last-child {
+    margin-bottom: 0;
+}
+.bs-callout code {
+    border-radius: 3px;
+}
+.bs-callout+.bs-callout {
+    margin-top: -5px;
+}
+.bs-callout-default {
+    border-left-color: #ADADAD;
+}
+.bs-callout-default h4 {
+    color: #ADADAD;
+}
+.bs-callout-primary {
+    border-left-color: #357ebd;
+}
+.bs-callout-primary h4 {
+    color: #357ebd;
+}
+.bs-callout-success {
+    border-left-color: #2B9884;
+}
+.bs-callout-success h4 {
+    color: #2B9884;
+}
+.bs-callout-danger {
+    border-left-color: #2B9884;
+}
+.bs-callout-danger h4 {
+    color: #2B9884;
+}
+.bs-callout-warning {
+    border-left-color: #e38d13;
+}
+.bs-callout-warning h4 {
+    color: #e38d13;
+}
+.bs-callout-info {
+    border-left-color: #5bc0de;
+}
+.bs-callout-info h4 {
+    color: #5bc0de;
 }
 
 

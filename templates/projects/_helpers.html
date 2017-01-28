@@ -36,7 +36,6 @@
     <li class="nav-link"><a href="{{url_for('project.new')}}">New</a></li>
 
     {% if project %}
-        <li class="divider"></li>
         <li class="nav-link{% if active_link=="dashboard"%} active{% endif %}">
             <a href="{{url_for('project.tasks', short_name=project.short_name)}}">Dashboard</a></li>
 
@@ -65,12 +64,12 @@
         </li>
         {% if config.get('LIBCROWDS_ANALYST_URL') %}
         <li class="nav-link">
-            <a href="{{ config['LIBCROWDS_ANALYST_URL'] }}/{{ project.short_name }}"> Analysis
-                <span id="unanalysed" class="badge badge-info"></span>
+            <a href="{{ config['LIBCROWDS_ANALYST_URL'] }}/projects/{{ project.short_name }}?api_key={{ current_user.api_key }}"> Analysis
+                <span id="unverified" class="badge badge-info"></span>
             </a>
         </li>
         <li class="nav-link">
-            <a href="{{ config['LIBCROWDS_ANALYST_URL'] }}/{{ project.short_name }}/download"> Download Input</a>
+            <a href="{{ config['LIBCROWDS_ANALYST_URL'] }}/download/{{ project.short_name }}?api_key={{ current_user.api_key }}"> Download Input</a>
         </li>
         {% endif %}
         <li class="nav-link">
@@ -85,14 +84,14 @@
 </ul>
 <script>
     $.ajax({
-        url: "https://www.libcrowds.com/api/result?project_id=" + {{ project.id }} + "&limit=100&info=Unanalysed&all=1",
+        url: "https://www.libcrowds.com/api/result?project_id=" + {{ project.id }} + "&limit=100&info=Unverified&all=1",
         dataType: "json",
     }).done(function( results ) {
         var count = results.length;
         if (count == 100) {
-            $("#unanalysed").html('100+');
+            $("#unverified").html('99+');
         } else if (count > 0){
-            $("#unanalysed").html(count);
+            $("#unverified").html(count);
         }
     });
 </script>
