@@ -1,7 +1,7 @@
 {   
-    "name": "libcrowds-pybossa-theme",
-    "author": "Alexander Mendes",
-    "website": "https://github.com/LibCrowds/libcrowds-libcrowds-pybossa-theme",
+    "name": "BURN theme",
+    "author": "Alexander Mendes/Jackson Gothe-Snape",
+    "website": "https://github.com/jacksongs/libcrowds-pybossa-theme",
     "license": "BSD",
-    "description": "A Pybossa theme for the LibCrowds crowdsourcing platform.",
+    "description": "Theme for BURN, adapted from a Pybossa theme for the LibCrowds crowdsourcing platform.",
 }
