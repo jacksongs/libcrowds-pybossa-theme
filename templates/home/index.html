@@ -25,10 +25,8 @@
         <div class="col-sm-offset-2 col-sm-8 text-center">
             <h2 class="inset-text-grey text-center">What's this all about?</h2>
             <p class="lead text-left">
-                Two journalists from the Canberra Press Gallery want to fix the Interests Register - the place our politicians declare conflicts of interest - for good.
-                BURN THE REGISTER (all caps please) will crowd-source the digitisation of the old paper and PDF entries to make them searchable, 
-                then lobby for freshly clarified, real-time, categorised, standardised, digital declarations. 
-                All this to allow long-suffering Parliamentary staff to BURN THE REGISTER, and for politicians to win back the trust of the community.
+                Australia's Parliamentary Interests Register - the place our politicians declare conflicts of interest - needs to be fixed.
+                The BURN THE REGISTER community of journalists and citizens will crowd-source the digitisation of the old hand-written paper and PDF entries to make them searchable.
             </p>
             <a href="{{ url_for('home.about')}}" class="btn btn-default">This is mad tell me more</a>
         </div>
@@ -50,13 +48,13 @@
         {% else %}
         <div class="col-sm-offset-2 col-sm-8 text-center">
             <div class="row">
-                <h2><a href="{{url_for('project.index')}}">Donate your brain</a></h2>
-                <p>This website displays PDFs of politicians' entries from the Interests Register so they can be transcribed. BURN THE REGISTER hopes that you, like Top Education Institute, will be prepared to spend your precious resources without expecting anything in return. Resources, in your case, of time and brainpower - no dollars required unless you really want to (email aphlifer@gmail.com). <p>
+                <h2><a href="{{url_for('project.index')}}">Join in</a></h2>
+                <p>Visit the <a href="{{url_for('project.index')}}">projects page</a> to see if there is any work to do, or visit the <a href="http://team.burntheregister.com">community forum</a> to learn secrets and share leads.<p>
             </div>
         </div>
         {% endif %}
         <div class="col-xs-12 text-center padding-bottom-md">
-            <a class="btn btn-default" href="{{url_for('project.index')}}">Okay I'm sold what can I do?</a>
+            <a class="btn btn-default" href="{{url_for('project.index')}}">Let's do this</a>
         </div>
     </div>
 </div>

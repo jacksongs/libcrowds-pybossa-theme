@@ -28,14 +28,14 @@
                     <a href="{{ url_for('project.index') }}">Projects</a>
                 </li>
 
-                <!-- See https://github.com/LibCrowds/libcrowds-statistics -->
+                <!-- See https://github.com/LibCrowds/libcrowds-statistics
                 <li class="nav-link{% if active_page == 'statistics' %} active{% endif %}">
                     {% if "libcrowds_statistics" in plugins %}
                     <a href="{{ url_for('statistics.index')}}">Statistics</a>
                     {% else %}
                     <a href="{{ url_for('stats.index')}}">Statistics</a>
                     {% endif %}
-                </li>
+                </li> -->
 
                 <!-- See https://github.com/alexandermendes/pybossa-discourse -->
                 <li class="nav-link{% if active_page == 'community' %} active{% endif %}">
@@ -45,7 +45,7 @@
                             {% if n %}<span id="notifications" class="badge badge-info">{{ n }}</span>{% endif %}
                         </a>
                     {% else %}
-                    <a href="{{ url_for('account.index')}}">Community</a>
+                    <a href="http://team.burntheregister.com">Community</a>
                     {% endif %}
                 </li>
 

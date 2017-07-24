@@ -1,0 +1,66 @@
+{% macro render_title(prefix, title, title_link=None) %}
+<div class="d-flex flex-row justify-content-between align-items-center">
+    <h1 class="mb-1">{% if prefix %}<strong>{{ prefix }}: </strong>{% endif %}{{ title }}</h1>
+    {% if title_link %}
+    <a href="{{ title_link[0] }}" class="btn btn-outline-primary btn-bg-white">{{ title_link[1] }}</a>
+    {% endif %}
+</div>
+<hr class="mb-4">
+{% endmacro %}
+
+{% macro render_pagination(pagination) %}
+<div class="d-flex justify-content-center w-100 mt-4">
+    <nav>
+        <ul class="pagination pagination-centered">
+            {% if pagination.has_prev %}
+            <li class="page-item">
+                <a href="{{ url_for_other_page(pagination.page - 1)}}" class="page-link">&laquo; </a>
+            </li>
+            {% endif %}
+
+            {% for page in pagination.iter_pages() %}
+                {% if page %}
+                    {% if page != pagination.page %}
+                    <li class="page-item">
+                        <a href="{{ url_for_other_page(page) }}" class="page-link">{{ page }}</a>
+                    </li>
+                    {% else %}
+                    <li class="active page-item">
+                        <a href="#" class="page-link">{{ page }}</a>
+                    </li>
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+
+            {% if pagination.has_next %}
+            <li class="page-item">
+                <a href="{{ url_for_other_page(pagination.page + 1)}}" class="page-link"> &raquo;</a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+</div>
+{% endmacro %}
+
+{% macro format_date(dateStr, appendTime=False) %}
+{{ "-".join(dateStr[:10].split('-')[::-1]) }}{% if appendTime %}, {{ dateStr[11:16] }}{% endif %}
+{% endmacro %}
+
+{% macro render_collapsing_sidebar(id, content, icon, btn_cls, aos=True) %}
+    <!-- Requires https://github.com/alexandermendes/pybossa-discourse -->
+    <div id="{{ id }}" class="sidebar-wrapper">
+        <button class="btn btn-info btn-sidebar mb-4 {{ btn_cls}}" type="button" role="button" data-toggle="sidebar-collapse"
+                data-target="#{{ id }}" {% if aos %}data-aos="fade-left" data-aos-duration="600"{% endif %}>
+            <span class="fa {{ icon }}"></span>
+        </button>
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <button type="button" class="close" data-toggle="sidebar-collapse" data-target="#{{ id }}">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            {{ content | safe }}
+        </div>
+    </div>
+    <div class="sidebar-overlay" data-toggle="sidebar-collapse" data-target="#{{ id }}"></div>
+{% endmacro %}

@@ -1,0 +1,46 @@
+{% macro render_title(title, description, search_table=None, title_link=None) %}
+<div class="card-block">
+    <div class="row">
+        <div class="{% if search_table or title_link %}col-lg-8{% else %}col-lg-12{% endif %} my-2">
+            <h3 class="card-title mb-1">{{ title }}</h3>
+            <p class="card-text text-muted">{{ description | safe }}</p>
+        </div>
+        {% if search_table %}
+        <div class="col-lg-4 my-2">
+            <input type="text" class="form-control rounded-oblong search-table" placeholder="Search" data-target="{{ search_table }}">
+        </div>
+        {% endif %}
+        {% if title_link %}
+        <div class="col-lg-4 my-2">
+            <a href="{{ title_link[0] }}" class="btn btn-outline-primary btn-block">{{ title_link[1] }}</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endmacro %}
+
+{% macro render_stat(font, stat, description, addon) %}
+<div class="card mt-3">
+    <div class="card-block">
+        <span class="fa {{ font }} fa-3x pull-right text-muted"></span>
+        <div class="card-text display-5 font-weight-bold">{{ stat }}</div>
+        <div class="card-text">{{ description }}</div>
+        <div class="card-text"><small>{{ addon }}</small></div>
+    </div>
+</div>
+{% endmacro %}
+
+{% macro render_button(title, description, url, icon, nofollow=True) %}
+<div class="col-md-6 col-xl-4 my-2">
+    <div class="card card-button">
+        <a href="{{ url }}" role="button" {% if nofollow%}rel="nofollow"{% endif %}>
+            <div class="card-block" data-description="{{ description }}">
+                <div class="card-title">{{ title }}</div>
+                <div class="card-icon">
+                    <span class="fa {{ icon }} fa-2x"></span>
+                </div>
+            </div>
+        </a>
+    </div>
+</div>
+{% endmacro %}

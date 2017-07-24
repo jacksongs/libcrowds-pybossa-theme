@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% set jstop = True %}
+
+{% block layout %}
+{% assets filters="jsmin", output="dist/js/presenter.min.js",
+    "../node_modules/tether-shepherd/dist/js/shepherd.js",
+    "../node_modules/imagesloaded/imagesloaded.pkgd.js"
+    %}
+    <script type="text/javascript" src="{{ ASSET_URL }}"></script>
+{% endassets %}
+{% set staff_or_admin = staff_or_admin -%}
+{% set active_page = active_page -%}
+{% set navbar_class = navbar_class | default("navbar fixed-top navbar-toggleable-xl navbar-inverse") %}
+<div class="vh-100 vw-100">
+    <div class="d-flex flex-row h-100">
+        {% include "_includes/_navbar.html" %}
+        <main>
+            {% block content %}
+            {% endblock %}
+        </main>
+    </div>
+</div>
+{% endblock %}
