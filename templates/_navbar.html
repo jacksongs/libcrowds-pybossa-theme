@@ -25,7 +25,7 @@
                     <a href="{{ url_for('home.about')}}">About</a>
                 </li>
                 <li class="nav-link{% if active_page == 'projects' %} active{% endif %}">
-                    <a href="{{ url_for('project.index') }}">Projects</a>
+                    <a href="{{ url_for('project.index') }}">Contribute</a>
                 </li>
 
                 <!-- See https://github.com/LibCrowds/libcrowds-statistics
@@ -41,18 +41,18 @@
                 <li class="nav-link{% if active_page == 'community' %} active{% endif %}">
                     {% if 'pybossa_discourse' in plugins %}
                         {% set n = discourse.notifications() %}
-                        <a href="{{ url_for('discourse.index')}}">Community
+                        <a href="{{ url_for('discourse.index')}}">Talk
                             {% if n %}<span id="notifications" class="badge badge-info">{{ n }}</span>{% endif %}
                         </a>
                     {% else %}
-                    <a href="http://team.burntheregister.com">Community</a>
+                    <a href="http://team.burntheregister.com">Talk</a>
                     {% endif %}
                 </li>
 
                 <!-- See https://github.com/LibCrowds/libcrowds-data -->
                 {% if "libcrowds_data" in plugins %}
                     <li class="nav-link {% if active_page == 'data' %} active{% endif %}">
-                        <a href="{{ url_for('data.index')}}">Data</a>
+                        <a href="{{ url_for('data.index')}}">Download</a>
                     </li>
                 {% endif %}
             </ul>
