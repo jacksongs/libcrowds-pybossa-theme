@@ -20,7 +20,7 @@
     </div>
 </div>
 
-<section class="mid-grey pattern-brushed box-shadow-grey-bottom">
+<section class="white pattern-white-wall box-shadow-white-bottom">
     <div class="container container-padded">
         <div class="col-sm-offset-2 col-sm-8 text-center">
             <h2 class="inset-text-grey text-center">What's this all about?</h2>
@@ -29,6 +29,31 @@
                 The BURN THE REGISTER community of journalists and citizens will crowd-source the digitisation of the old hand-written paper and PDF entries to make them searchable.
             </p>
             <a href="{{ url_for('home.about')}}" class="btn btn-default">This is mad tell me more</a>
+        </div>
+    </div>
+</section>
+
+<section class="grey pattern-brushed box-shadow-grey-bottom">
+    <div class="container padding-top-sm">
+        <div class="col-sm-offset-2 col-sm-8 text-center">
+            <h2 class="inset-text-grey text-center">How are we tracking?</h2>
+                <img style='width:100%' src="{{url_for('static',filename='img/sns.png')}}"><br><br>
+                
+                Each page of the register is transcribed three times to ensure the results are triple-checked.
+        </div>
+        <div>
+                <div class="col-sm-4 text-center">
+                    <h3><small>MPs in Parliament:</small><br>226</h3>
+                </div>
+
+                <div class="col-sm-4 text-center">
+                    <h3><small>Total pages:</small><br>{{ n_tasks }}</h3>
+                </div>
+                <div class="col-sm-4 text-center">
+                    <h3><small>Completed pages:</small><br> {{ n_task_runs }} </h3>
+                </div>
+        <div class="col-sm-offset-2 col-sm-8 text-center">
+                <h3>{{ progress }} per cent complete</h3>
         </div>
     </div>
 </section>
