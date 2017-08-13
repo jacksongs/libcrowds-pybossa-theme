@@ -12,7 +12,7 @@
                 <div data-anchor="#featured-projects" class="btn btn-circle anchor-btn">
                     <a>
                         <div><i class="fa fa-angle-double-down fa-3x padding-top-sm"></i></div>
-                        <div><br>Dive right<br>on in</div>
+                        <div><br>Dive<br>on in</div>
                     </a>
                 </div>
             </div>
@@ -24,7 +24,7 @@
     <div class="container container-padded">
         <div class="col-sm-offset-2 col-sm-8 text-center">
             <h2 class="inset-text-grey text-center">What's this all about?</h2>
-            <p class="lead text-left">
+            <p class="lead">
                 Australia's Parliamentary Interests Register - the place our politicians declare conflicts of interest - needs to be fixed.
                 The BURN THE REGISTER community of journalists and citizens will crowd-source the digitisation of the old hand-written paper and PDF entries to make them searchable.
             </p>
@@ -36,24 +36,26 @@
 <section class="grey pattern-brushed box-shadow-grey-bottom">
     <div class="container padding-top-sm">
         <div class="col-sm-offset-2 col-sm-8 text-center">
-            <h2 class="inset-text-grey text-center">How are we tracking?</h2>
+
                 <img style='width:100%' src="{{url_for('static',filename='img/sns.png')}}"><br><br>
-                
+            <h2 class="inset-text-grey text-center">How are we tracking?</h2>    
                 Each page of the register is transcribed three times to ensure the results are triple-checked.
+            
         </div>
         <div>
-                <div class="col-sm-4 text-center">
-                    <h3><small>MPs in Parliament:</small><br>226</h3>
+                <div class="col-sm-2 col-sm-offset-2 text-center">
+                    <h3>2000+ pages on register</h3>
                 </div>
 
-                <div class="col-sm-4 text-center">
-                    <h3><small>Pages uploaded:</small><br>{{ n_tasks }}</h3>
+                <div class="col-sm-2 col-sm-offset-1 text-center">
+                    <h3>{{ n_tasks }} digitisation tasks created</h3>
                 </div>
-                <div class="col-sm-4 text-center">
-                    <h3><small>Completed pages:</small><br> {{ n_task_runs }} </h3>
+                <div class="col-sm-2 col-sm-offset-1 text-center">
+                    <h3> {{ n_task_runs }} tasks completed</h3>
                 </div>
+        </div>
         <div class="col-sm-offset-2 col-sm-8 text-center">
-                <h3>{{ progress }} per cent complete</h3>
+                <p>So far BURN THE REGISTER has digitised {{ progress }} per cent of uploaded pages and around {{ progress_current }} per cent of the register overall</p>
         </div>
     </div>
 </section>
