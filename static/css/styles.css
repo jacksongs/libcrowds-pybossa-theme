@@ -2339,8 +2339,8 @@ img.img-polaroid {
 }
 
 .polaroids .polaroid img {
-    width: 120px;
-    max-width: 120px;
+    width: 90px;
+    max-width: 90px;
     max-height: 120px;
     margin-bottom: 10px;
     border: 1px solid #DDD
