@@ -195,11 +195,11 @@
         <div class="col-sm-3 hidden-sm hidden-xs">
             <div class="white-panel inset-shadow-white project-info">
                 <div class="vcenter">
-                    <i class="fa fa-check-square-o fa-2x fa-fw padding-right-xs"></i>Completed: {{ project.overall_progress | round | int }}%
+                    <i class="fa fa-check-square-o fa-2x fa-fw padding-right-xs"></i>Triple-checked: {{ project.overall_progress | round | int }}%
                 </div>
-                <hr>
+                <hr class="margin-top-xs margin-bottom-xs">
                 <div class="vcenter">
-                    <i class="fa fa-tasks fa-2x fa-fw padding-right-xs"></i><span class="tasks-remaining" data-tasks="{{project.n_tasks}}" data-progress="{{ project.overall_progress | round | int }}">Tasks Remaining:</span>
+                    <i class="fa fa-tasks fa-2x fa-fw padding-right-xs"></i><span class="tasks-remaining" data-tasks="{{project.n_tasks}}" data-progress="{{ project.overall_progress | round | int }}">Pages remaining:</span>
                 </div>
                 <hr class="margin-top-xs margin-bottom-xs">
                 <div class="vcenter">
@@ -207,7 +207,7 @@
                 </div>
                 <hr class="margin-top-xs margin-bottom-xs">
                 <div class="vcenter">
-                    <i class="fa fa-clock-o fa-2x fa-fw padding-right-xs"></i>Last Active: {{ project.last_activity}}
+                    <i class="fa fa-clock-o fa-2x fa-fw padding-right-xs"></i>Last active: {{ project.last_activity}}
                 </div>
             </div>
             <div class="text-center padding-top-sm">
