@@ -48,7 +48,7 @@
     <div class="col-xs-12 padding-top-xs">
         {% if projects %}
             <div class="polaroids projects margin-top-sm">
-                {% for project in projects %}
+                {% for project in projects|sort(attribute='long_description') %}
                     {{ helper.show_project(project, active_cat.short_name, current_user, upload_method) }}
                 {% endfor %}
             </div>
@@ -57,7 +57,7 @@
             {% endif %}
         {% else %}
             <div class="container container-padded">
-                <h2 class="text-center inset-text-grey">Stay tuned, more MPs and Senators will be released for transcription soon.</h2>
+                <h2 class="text-center inset-text-grey">Stay tuned, more MPs will be released for transcription soon.</h2>
             </div>
         {% endif %}
         </div>
