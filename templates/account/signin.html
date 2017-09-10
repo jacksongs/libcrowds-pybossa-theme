@@ -42,14 +42,11 @@
         </form>
         <div class="padding-top-lg">
             <p class="text-center muted">By clicking the <strong>Sign in</strong> button you are agreeing to our <a href={{url_for('help.tos')}}>terms of use</a>.</p>
-            <p class="text-center muted">If you don't have an account...?</p>
+            <p class="text-center muted">If you don't have an account, sign up below.</p>
         </div>
-    </div>
-    <hr>
-    <div class="row padding-top-sm">
-        <div class="col-xs-12 text-center">
-            <a href="{{ url_for('account.register') }}" class="btn btn-primary"><i class="fa fa-user-plus"></i> Create a new account</a>
-        </div>
+        <div>
+            <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSdKJOtlHzctdVUG_Tw6n9btcMiNPC-BismwsaTkZlx1s3FCHg/viewform?embedded=true" width="550" height="1200" frameborder="0" marginheight="0" marginwidth="0">Loading...</iframe>
+        <div class="padding-top-lg">
     </div>
 </div>
 {% endblock %}
