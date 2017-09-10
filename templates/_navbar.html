@@ -38,7 +38,7 @@
                 </li> -->
 
                 <!-- See https://github.com/alexandermendes/pybossa-discourse -->
-                <li class="nav-link{% if active_page == 'community' %} active{% endif %}">
+                <!--li class="nav-link{% if active_page == 'community' %} active{% endif %}">
                     {% if 'pybossa_discourse' in plugins %}
                         {% set n = discourse.notifications() %}
                         <a href="{{ url_for('discourse.index')}}">Talk
@@ -47,7 +47,7 @@
                     {% else %}
                     <a href="http://talk.burntheregister.com">Talk</a>
                     {% endif %}
-                </li>
+                </li>-->
 
                 <!-- See https://github.com/LibCrowds/libcrowds-data
                 {% if "libcrowds_data" in plugins %}
