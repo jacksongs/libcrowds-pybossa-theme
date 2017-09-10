@@ -49,7 +49,6 @@ function setTasksRemaining() {
 $('.tasks-remaining').each(function() {
     var progress = $(this).attr('data-progress');
     var remaining = Math.ceil((100 - progress));
-    $(this).html('Pages: ' + progress);
 });
 }
 
