@@ -96,11 +96,7 @@
         <div class="col-md-11 padding-top-xs padding-bottom-sm">
             <h2>Contact information</h2>
             <ul class="no-style">
-                {% if 'pybossa_discourse' in plugins %}
-                <li>Visit the <a href="{{url_for('discourse.index')}}">BURN THE REGISTER Community</a> for more information or to report any issues.</li>
-                {% else %}
                 <li><a href="mailto:{{contact_email}}">Email us</a> for more information.</li>
-                {% endif %}
             </ul>
         </div>
     </div>
