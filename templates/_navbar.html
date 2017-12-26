@@ -49,6 +49,10 @@
                     {% endif %}
                 </li>
 
+                <li class="nav-link{% if active_page == 'statistics' %} active{% endif %}">
+                    <a href="{{ url_for('stats.index') }}">Progress</a>
+                </li>
+
                 <!-- See https://github.com/LibCrowds/libcrowds-data
                 {% if "libcrowds_data" in plugins %}
                     <li class="nav-link {% if active_page == 'data' %} active{% endif %}">

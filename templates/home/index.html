@@ -39,23 +39,11 @@
 
                 <img style='width:100%' src="{{url_for('static',filename='img/sns.png')}}"><br><br>
             <h2 class="inset-text-grey text-center">How are we tracking?</h2>    
-                Each page of the register will be transcribed twice to make them searchable. For high value datasets like shareholdings, the data will be sent back to the MP for sign-off, to ensure the results are triple-checked.
+                <p>Each page of the register will be transcribed twice to make the disclosures searchable.</p>
             
         </div>
-        <div>
-                <div class="col-sm-2 col-sm-offset-2 text-center">
-                    <h3>2700+ pages on register</h3>
-                </div>
-
-                <div class="col-sm-2 col-sm-offset-1 text-center">
-                    <h3>{{ n_tasks }} digitisation tasks created</h3>
-                </div>
-                <div class="col-sm-2 col-sm-offset-1 text-center">
-                    <h3> {{ n_task_runs }} tasks completed</h3>
-                </div>
-        </div>
         <div class="col-sm-offset-2 col-sm-8 text-center">
-                <p>So far we have done around {{ progress_current }} per cent of the transcription required.</p>
+                <p>Check out the <a href="/stats">Progress</a> page to see how we are tracking.</p>
         </div>
     </div>
 </section>
@@ -63,23 +51,12 @@
 <a id="featured-projects"></a>
 <section class="white pattern-white-wall box-shadow-white-bottom">
     <div class="container padding-top-sm">
-        {% if categories_projects['featured'] %}
-        <div class="text-center col-xs-12 padding-bottom-sm">
-            <h2>Featured Crowdsourcing Projects</h2>
-        </div>
-        <div class="polaroids">
-            {% for project in categories_projects['featured'] %}
-              {{ helper.show_project(project, "featured", current_user, upload_method) }}
-            {% endfor %}
-        </div>
-        {% else %}
         <div class="col-sm-offset-2 col-sm-8 text-center">
             <div class="row">
                 <h2>Join in</h2>
-                <p>Join the <a href="https://www.meetup.com/BURN-THE-REGISTER/">meet-up</a> group or sign up for a 5 minute one-on-one walkthrough below. Once you have an account, visit the <a href="{{url_for('project.index')}}">contribute page</a> to get involved.</p>
+                <p>Become part of the <a href="https://www.meetup.com/BURN-THE-REGISTER/">Meetup group</a>, check out the <a href="https://talk.burntheregister.com">community forum</a> and register your interest for a 15 minute one-on-one walkthrough below.
             </div>
         </div>
-        {% endif %}
         <div class="col-xs-12 text-center padding-bottom-md">
             <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSdKJOtlHzctdVUG_Tw6n9btcMiNPC-BismwsaTkZlx1s3FCHg/viewform?embedded=true" width="100%" height="1300" frameborder="0" marginheight="0" marginwidth="0">Loading...</iframe>
         </div>
