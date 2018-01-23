@@ -436,7 +436,7 @@ document.addEventListener("DOMContentLoaded", function(e) {
 	$("span").on('click', function clickface() {
 
 		// make all pages the same opacity
-		$("#pages img").fadeTo(1);
+		$("#pages img").fadeTo("fast",1);
 
 		//add filter to all faces
 		$(this).siblings().children("img").attr('style','filter:grayscale(100%);vertical-align:middle;width:27px;height:40px;overflow: hidden;');
@@ -509,9 +509,9 @@ document.addEventListener("DOMContentLoaded", function(e) {
 	// show entries when a page is clicked
 	$("#pages img").on("click", function() {
 
-		$(this).siblings().attr('style','opacity:0.4');
+		$(this).siblings().fadeTo("fast",0.4);
 		
-		$(this).attr('style','opacity:1');
+		$(this).fadeTo("fast",1);
 
 		// get url of image
 		var imgsrc = $(this).attr("src").replace("_m","_b");
