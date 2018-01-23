@@ -2,11 +2,12 @@
 {% set active_page = "search" %}
 
 {% block content %}
+<script src="static/js/lunr.js"></script>
+<script src="static/js/d3.v3.min.js" charset="utf-8"></script>
+
 <div class="container container-main">
     <div class="row">
         <div class="col-sm-12">
-<script src="static/js/lunr.js"></script>
-	<script src="static/js/d3.v3.min.js" charset="utf-8"></script>
 
 	<div id="cover"><br><br><br><br><br><h3>Loading...</h3><img src="static/img/loading.gif"</></div>
 	<!--[if lte IE 9]>
@@ -72,7 +73,7 @@ document.addEventListener("DOMContentLoaded", function(e) {
 		.attr("data-below2",function(d) { return d.below2 })
 		.attr("data-project_id",function(d) { return d.id })
 		.style("width","30px").style("text-align","center").style("font-size","20px").append('img')
-		.attr("src",function(d){return "static/thumbs/"+d.code+".jpg"})
+		.attr("src",function(d){return "static/img/thumbs/"+d.code+".jpg"})
 		.style("width","27px").style("height","40px")
 		.style("vertical-align","middle").style("filter","grayscale(100%)")
 		.style("overflow","hidden");
@@ -550,10 +551,6 @@ $(window).on('load', function() {
 
 		
 	<style> 
-
-	#start {
-		padding-top:90px;
-	}
 
 	#myInput {
 		width:350px;
