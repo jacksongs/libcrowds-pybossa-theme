@@ -5,8 +5,605 @@
 <div class="container container-main">
     <div class="row">
         <div class="col-sm-12">
-            <h1>Search Results</h1>
-            <gcse:searchresults-only></gcse:searchresults-only>
+<script src="static/js/lunr.js"></script>
+	<script src="static/js/d3.v3.min.js" charset="utf-8"></script>
+
+	<div id="cover"><br><br><br><br><br><h3>Loading...</h3><img src="static/img/loading.gif"</></div>
+	<!--[if lte IE 9]>
+		<p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience and security.</p>
+	<![endif]-->
+
+	<!-- the search bar!  -->
+	<div id="start" class='col-md-10 col-md-offset-1'>
+		<div>Search:
+		<input type="text" id="myInput" placeholder="Type company, suburb etc, then press enter"></div>
+		<br>
+		<div><button id="showhints" class='btn btn-sm btn-default'>Show more information</button></div>
+		<br>
+		<div id="hints" style="display:none">
+			<p>This page is updated once per week.</p>
+			<p><button id='togo' class='btn btn-sm btn-primary'>Toggle pages to go for each MP</button></p>
+			<p>The search is not case-sensitive and supports the following:</p>
+			<strong>Single term</strong>
+			<ul>
+				<li>Wildcards - use * eg: comm*</li>
+				<li>Fuzzy matching - use ~3 to match a word that would require three characters to be changed eg: beretta~1 </li>
+			</ul>
+			<strong>Multiple terms</strong>
+			<ul>
+				<li>Exact match - just type exactly as it appears, no quotation marks needed, eg: Mawson Lakes</li>
+				<li>AND operator - search for multiple terms in a single entry by separating words with plus signs eg: Qantas+club</li>
+				<li>OR operator - search for multiple terms by separating words with commas eg: golf,tennis,cycling</li>
+			</ul>
+		</div>
+	</div>
+
+	<!-- this is for the gallery of headshots-->
+	
+	<div id="gallery" class='col-md-10 col-md-offset-1'>
+
+	</div>
+
+	<!-- this is for the gallery of pages-->
+
+	<div id="contribute" class='col-md-10 col-md-offset-1'>
+	</div>
+	
+	<div id="pages" class='col-md-10 col-md-offset-1'>
+	</div>
+
+	<!-- this is for all the entry information -->
+
+	<div id="layout" class='col-md-10 col-md-offset-1'>
+
+	</div>
+
+
+	<!-- this bit creates the thumbnail area and the mock pages -->
+	
+	<script>
+
+document.addEventListener("DOMContentLoaded", function(e) {
+
+	d3.json("https://s3-ap-southeast-2.amazonaws.com/burnsearch/projects.json", function(error, thumbs) {
+		if (error) throw error;
+		d3.select('#gallery').selectAll('div').data(thumbs).enter()
+		.append("span").attr("class","img-overlay-wrap").attr("id",function(d) { return d.code })
+		.attr("data-below2",function(d) { return d.below2 })
+		.attr("data-project_id",function(d) { return d.id })
+		.style("width","30px").style("text-align","center").style("font-size","20px").append('img')
+		.attr("src",function(d){return "static/thumbs/"+d.code+".jpg"})
+		.style("width","27px").style("height","40px")
+		.style("vertical-align","middle").style("filter","grayscale(100%)")
+		.style("overflow","hidden");
+	  	var span = d3.selectAll('#gallery span');
+
+		// Define the div for the tooltip
+		var div = d3.select("#gallery").append("span")	
+			.attr("class", "tooltip")
+			.style("float","right")				
+			.style("opacity", 0);
+
+		span.on("mouseover", function(d) {		
+			div.transition()		
+			.duration(200)		
+			.style("opacity", .9);		
+			div.html(d.name).style("left", (d3.event.pageX - 60) + "px")		
+			.style("top", (d3.event.pageY - 120) + "px");	
+			})
+
+		d3.select('#gallery').on("mouseout", function(d){
+			div.transition().duration(200).style('opacity',0)
+		})
+
+	  	// these are the divs for all the headshots
+	  	span.append('div')
+			.attr('class','below2')
+			.style("position","absolute")
+			.style("top","50%")
+			.style("left","50%")
+			.style("transform","translate(-50%, -50%)")
+			.style('color','white')
+			.style('display','none')
+			.text(function(d){if (d.below2 > 0) { return d.below2 } else { return '' }})
+	  
+		// and the svgs in the headshots
+		span.append('svg')
+			.attr('width', 40)
+			.attr('height', 50)
+			.attr('viewBox', "-1.1 -0.8 3 3")
+			.attr("class","img-overlay-wrap");
+
+		// these create a div for each mp in the contribute div
+		var cont = d3.select("#contribute").selectAll('div').data(thumbs).enter()
+		.append("div").attr("class",function(d) { return d.code }).style("display","none");
+
+		// and we add a heading with the name of the mp
+		cont.append("h3").text(function (d) { return d.name });
+
+		// and a link to the contribute page
+		cont.append("p").append("a")
+		.attr("href",function (d) { return "https://burntheregister.com/project/" + d.short_name +"/newtask" }).text("Contribute transcription for this MP");
+
+		// these create a div for each mp in the pages div
+		var ps = d3.select('#pages').selectAll('div').data(thumbs).enter()
+		.append("div").attr("class",function(d) { return d.code }).style("display","none");
+
+		// this adds an image for each page in the pages div, and preloads with a loading gif
+		ps.each(function (d) {
+			var ul = d3.select(this);
+			for (i = 1; i <= d.pages; i++) {
+				var imgs = ul.append("img").attr("width",35).attr("height",40)
+				imgs.attr("class","page"+i)
+				imgs.attr("src","static/img/Loading_icon.gif")
+				imgs.style('border','3px solid white');
+				imgs.style('overflow','hidden');
+			};
+	  	});
+
+	});
+
+	// this part defines the functions for the circle paths
+	
+	function circlePath(δr_min,δr_max, θ0_min, θ0_max, δθ_min,δθ_max) {
+		var c = 0.551915024494,
+			β = Math.atan(c),
+			d = Math.sqrt(c*c+1*1),
+			r = 1,
+			θ = (θ0_min + Math.random()*(θ0_max - θ0_min))*Math.PI/180,
+			path = 'M';
+		
+		path += [r * Math.sin(θ), r * Math.cos(θ)];
+		path += ' C' + [d * r * Math.sin(θ + β), d * r * Math.cos(θ + β)];
+		
+		for (var i=0; i<4; i++) {
+			θ += Math.PI/2 * (1 + δθ_min + Math.random()*(δθ_max - δθ_min));
+			r *= (1 + δr_min + Math.random()*(δr_max - δr_min));
+			path += ' ' + (i?'S':'') + [d * r * Math.sin(θ - β), d * r * Math.cos(θ - β)];
+			path += ' ' + [r * Math.sin(θ), r * Math.cos(θ)];
+		}
+		
+		return path;
+	}
+
+	function circleXform(λ_min, λ_max, θ_min, θ_max) {
+		var θ = (θ_min + Math.random()*(θ_max - θ_min));
+		return 'rotate(' + θ + ') '
+			+ 'scale(1, ' + (λ_min + Math.random()*(λ_max - λ_min)) + ')'
+			+ 'rotate(' + (-θ) + ')';
+	}
+
+	// this part creates the svg viewboxes
+
+	var results = 'none';
+
+	d3.json("https://s3-ap-southeast-2.amazonaws.com/burnsearch/entries.json", function(error, list) {
+	  	if (error) throw error;
+
+		var idx = lunr(function () {
+			this.pipeline.remove(lunr.stemmer)
+			this.pipeline.remove(lunr.stopWordFilter)
+			this.searchPipeline.reset()
+
+			this.ref('i')
+			this.field('text')
+
+			list.forEach(function (doc) {
+			this.add(doc)
+			}, this)
+		});
+
+	// structure of pages
+
+	d3.json("https://s3-ap-southeast-2.amazonaws.com/burnsearch/entrylayout.json", function(error, layout) {
+		
+		if (error) throw error;
+
+		var entrypages = d3.select("#layout").selectAll('div').data(layout).enter()
+			.append('div').attr('class',function(d){return d.code + " page" + d.page }).style("display","none").append('div').attr('class','ulul col-md-6');
+
+		var ulholders = entrypages.selectAll('div').append('div').data(function(d1){return d1.taskrun_id}).enter().append('div').attr('class',function(d,i){return d+" ulholder"});
+
+		d3.selectAll("#layout > div").insert("div",":first-child").attr('class','col-md-6').append("img")
+			.attr("src","static/img/Loading_icon.gif")
+			.style("width","100%")	;
+
+		ulholders.append('ul');
+		ulholders.append("button").text('Spot a mistake? Flag this contribution').attr('value',function(d){return d}).attr('class','flag btn btn-xs btn-default').style("font-size","12px");
+		d3.selectAll(".ulul").insert("h4",":first-child").text("Contributor transcriptions");
+		
+
+		//flag button
+		$(".flag").on('click',function(){
+
+			var data = {'taskrun_id':$(this).val(),'user_id':'1','name':'jacksongs'};
+			data.formDataNameOrder = '["taskrun_id","user_id","name"]';
+			data.formGoogleSheetName = "responses"; // default sheet name
+			data.formGoogleSendEmail = ""; // no email by default
+
+
+			var xhr = new XMLHttpRequest();
+			var url = 'https://script.google.com/macros/s/AKfycbwjYgh-2gtOZuU9x6vh7uiR40_lBNal9WxGCss9lpAf3Snc8jk/exec';
+			xhr.open('POST', url);
+			xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+			function flaggee(a) {
+
+				a.prop('disabled', true).text('Flagged!');
+			};
+			
+			xhr.onreadystatechange = flaggee($(this))
+			xhr.send(Object.keys(data).map(function(k) {
+				return encodeURIComponent(k) + '=' + encodeURIComponent(data[k])
+				}).join('&'));
+		})
+
+	});			
+
+	function myFunction() {
+
+		// remove all previous yellow rectangles
+		d3.select("#pages").selectAll('img').style('border','0px')
+
+		// Remove all previous entries
+		$('#entries div div ul').html('');
+
+		// Make all rectangles see through
+		d3.selectAll('rect').transition().style('fill','none')
+
+		// Hide all pages from previous searches
+		$("#ulpages li").hide();
+
+		// Make all faces the same opacity
+		$("span").fadeTo("fast",1);
+
+		// Remove old paths
+		d3.selectAll('path').remove();
+		
+		var vals = $("#myInput").val();
+
+		gtag('event', 'search', {
+		  // Event parameters
+		  'search_term':vals
+		  // ...
+		});
+
+		if ( vals.indexOf(",") != -1 ) {
+			
+			var codes = []
+
+			var full = []
+
+			for (o = 0; o < vals.split(",").length ; o++) { // for the OR search
+
+				var results = idx.search(vals.split(",")[o]);
+				// codes is just the MP keys returned by the search
+
+
+				// This variable holds the mp codes as its keys, and an array of pages for each one
+
+				for (i = 0; i < results.length; i++) { 
+					full.push(list[Number(results[i].ref)])
+				};
+				
+				for (i = 0; i < full.length; i++) { 
+					if (codes.indexOf(full[i].code)==-1) { codes.push(full[i].code)}
+				};
+				
+			};
+
+		} else if ( vals.indexOf("+") != -1 ) { // for the AND search
+			
+			var codes = []
+
+			var full = []
+
+			for (o = 0; o < vals.split("+").length ; o++) {
+
+				if ( o == 0 ) { 
+					var allres = idx.search(vals.split("+")[o]); 
+					var allhave = [];
+					allres.forEach(function(item) {
+						allhave.push(item.ref);
+					});
+					
+				} else {
+					
+					var valy = vals.split("+")[o];
+					
+					var results = idx.search(valy);
+
+					allhave.slice().reverse().forEach(function(item, index, object) {
+						var match = false;
+						for (w = 0; w < results.length; w++ ) {
+						  if (item === results[w].ref) {
+							match = true;
+						  }
+						}
+						if (match == false) {
+							allhave.splice(object.length - 1 - index, 1)
+						}
+					});
+					
+				}
+
+			};
+
+			for (i = 0; i < allhave.length; i++) { 
+				full.push(list[Number(allhave[i])])
+			};
+			
+			for (i = 0; i < full.length; i++) { 
+				if (codes.indexOf(full[i].code)==-1) { codes.push(full[i].code)}
+			};
+
+		} else if ( vals.indexOf(" ") != -1 ) { // for the exact match search
+			
+			var results = []
+
+			list.forEach(function(item) {
+				if ( item.text.toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,"").replace(/\s{2,}/g," ").indexOf(vals.toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,"").replace(/\s{2,}/g," ")) != -1 ) {
+					results.push(item)
+				}
+			});
+
+			// codes is just the MP keys returned by the search
+			var codes = []
+
+			// This variable holds the mp codes as an array
+			var full = []
+			
+			for (i = 0; i < results.length; i++) { 
+				full.push(list[Number(results[i].i)])
+			};
+			
+			for (i = 0; i < full.length; i++) { 
+				if (codes.indexOf(full[i].code)==-1) { codes.push(full[i].code)}
+			};
+
+		} else { // for the ordinary single term search
+			var results = idx.search($("#myInput").val());
+
+			// codes is just the MP keys returned by the search
+			var codes = []
+
+			// This variable holds the mp codes as an array
+			var full = []
+			for (i = 0; i < results.length; i++) { 
+				full.push(list[Number(results[i].ref)])
+			};
+			
+			for (i = 0; i < full.length; i++) { 
+				if (codes.indexOf(full[i].code)==-1) { codes.push(full[i].code)}
+			};
+		};
+
+		// here, we add a circle to each MP returned
+		for (var i=0; i<codes.length; i++) {
+			var span = d3.select("#"+codes[i]);
+			var svg = span.select('svg');
+			svg.append('path')
+				.classed('pencil', true)
+				.style("fill","none")
+				.style("stroke","yellow")
+				.style("stroke-width","0.2px")
+				.attr('d', function() { return circlePath(
+					-0.1, 0,
+					140, 240, 
+					-0.2, 0.3)})
+				.attr('transform', function() { return circleXform(
+					0.9, 1, 
+					30, 50)});
+		};
+
+		// Now let's do yellow rectangles!
+		for (var i=0; i<full.length; i++) {
+			var img = d3.select("#pages").select("."+full[i].code).select('img.page'+full[i].page);
+			img.transition().style('border','3px solid yellow');
+		};
+
+		// and we animated these paths
+		var pa = d3.selectAll('path');
+
+		pa.style('stroke-dasharray', function(d) {
+		  var l = d3.select(this).node().getTotalLength();
+		  return l + 'px, ' + l + 'px';
+		})
+		.style('stroke-dashoffset', function(d) {
+		  return d3.select(this).node().getTotalLength() + 'px';
+		})
+		.transition()
+		.delay(function(d,i){ return 20*(i*Math.random()); }) 
+		.duration(1400)
+		.style('stroke-dashoffset', '0px');
+		  
+	}
+
+	$( "#showhints" ).click(function() {
+	  $( "#hints" ).slideToggle( "fast", function() {
+		// Animation complete.
+	  });
+	});
+
+	$("#myInput").on('keyup', function (e) {
+		if (e.keyCode == 13) {
+			myFunction();
+
+		}
+	});
+
+	$("span").on('click', function clickface() {
+
+		// make all pages the same opacity
+		$("#pages img").fadeTo(1);
+
+		//add filter to all faces
+		$(this).siblings().children("img").attr('style','filter:grayscale(100%);vertical-align:middle;width:27px;height:40px;overflow: hidden;');
+		
+		$(this).children("img").attr('style','filter:none;vertical-align:middle;width:27px;height:40px;overflow: hidden;');
+
+		// Hide all pages from previous searches
+		$("#pages div div").hide();
+
+		// All the big pages/entries
+		$("#layout div").hide();
+
+		// Get class of span
+
+		var mp = $(this).attr('id');
+
+		// Make sure the clicked face is at full opacity
+
+		$(this).fadeTo("fast",1);
+
+		// This part partly hides the other faces
+		
+		$(this).siblings().fadeTo("slow", 0.45);
+
+		// show contribute div
+		$("#contribute div").hide();
+		$("#contribute ."+mp).fadeTo("fast",1);
+
+		// show page div
+		$("#pages div").hide();
+		$("#pages div."+mp).fadeTo("fast",1);
+
+		//project id
+		var pid = $(this).attr('data-project_id');
+
+		var jqxhr = $.get( "https://burntheregister.com/api/task?limit=100&project_id="+pid, function(d) {
+		  for (u = 0;u<d.length;u++) {
+			var imgs = $("#pages div."+mp+ " img")
+			$(imgs[u]).attr("src",d[u].info.url_m)
+			}
+		 
+		});
+
+		var lupcol = {
+			'Addition':'success',
+			'Deletion':'danger',
+			'Self':'primary',
+			'Spouse':'warning',
+			'Other':'info',
+			'N/A':'default'
+		}
+
+		list.forEach(function(item){
+			if (item.code == mp) {
+				var mplookup = "#layout div."+item.code+".page"+item.page+" div."+item.taskrun_id+" > ul"
+				var entry = $("<li>").html(item.text+' <span class="label label-'+lupcol[item.ad]+'">'+item.ad+'</span>'+' <span class="label label-'+lupcol[item.who]+'">'+item.who+'</span>'+' <span class="label label-default">'+item.item+'</span>')
+				//.append("span").attr("class","badge badge-pill badge-primary").text(item.text+", "+item.ad+"</
+				//span>, "+item.who+", "+item.item+", "+item.match).attr('class',item.i);
+				var lookedup = $(mplookup);
+				lookedup.append(entry);
+			}
+		})
+
+		var $target = $('html,body'); 
+		$target.animate({scrollTop: $target.height()}, 2000);
+
+
+	});
+
+	// show entries when a page is clicked
+	$("#pages img").on("click", function() {
+
+		$(this).siblings().attr('style','opacity:0.4');
+		
+		$(this).attr('style','opacity:1');
+
+		// get url of image
+		var imgsrc = $(this).attr("src").replace("_m","_b");
+		var lookup1 = "#layout div."+String($(this).parent().attr("class"))+"."+String($(this).attr("class"))+" div img";
+		$(lookup1).attr("src",imgsrc);
+
+		var lookup = "#layout div."+String($(this).parent().attr("class"))+"."+String($(this).attr("class"));
+		$(lookup).siblings().hide();
+		$(lookup).show();
+		$(lookup).children().show();
+		$(lookup).children().children().show();
+		
+		// check if uls are empty, if so replace them with 'no entries recorded for this page for this contribution'
+		//$(lookup + ' ul:empty').append($('<i>No entries recorded for this page in this contribution</i>'));
+	
+		var $target = $('html,body'); 
+		$target.animate({scrollTop: $target.height()}, 2000);
+
+	});
+
+	//toggle pages to go
+	$("#togo").on("click",function(d) {
+		$('.below2').fadeToggle("slow");
+	});
+
+	});
+
+})
+
+$(window).on('load', function() {
+	setTimeout(function(){
+    	d3.select("#cover").transition().duration(1000).style("opacity", 0).remove();
+	}, 2000);
+});
+
+	</script>
+
+		
+	<style> 
+
+	#start {
+		padding-top:90px;
+	}
+
+	#myInput {
+		width:350px;
+	}
+
+	.img-overlay-wrap {
+	position: relative;
+	display: inline-block; /* <= shrinks container to image size */
+	transition: transform 150ms ease-in-out;
+	}
+
+	.img-overlay-wrap img { /* <= optional, for responsiveness */
+	 display: block;
+	 max-width: 100%;
+	 height: auto;
+	}
+
+	.img-overlay-wrap svg {
+	position: absolute;
+	top: 0;
+	left: 0;
+	}
+
+	#pages {
+		padding-bottom: 10px;
+	}
+
+	.ulholder {
+	padding-top:10px;
+	margin-bottom:10px;
+	padding-bottom:15px;
+	padding-left:15px;
+	background-color:#f2f2f2;
+	}
+
+	li {
+		margin-left:15px;
+	}
+
+	.ulholder li {
+		margin-bottom: 5px;
+	}
+
+	#cover {position: fixed; height: 100%; width: 100%; top:0; left: 0; background: #ffffff; z-index:9999; text-align: center}
+
+	.tooltip {
+		background: white;
+		padding:3px;
+	}
+	</style>
         </div>
     </div>
 </div>
