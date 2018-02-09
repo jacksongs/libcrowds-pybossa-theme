@@ -53,9 +53,15 @@
                     <a href="{{ url_for('stats.index') }}">Progress</a>
                 </li>
 
+                <li class="nav-link{% if active_page == 'leaderboard' %} active{% endif %}">
+                    <a href="{{ url_for('home.leaderboard') }}">BURNers</a>
+                </li>
+
+                <!--
                 <li class="nav-link{% if active_page == 'search' %} active{% endif %}">
                     <a href="{{ url_for('home.search') }}">Search</a>
                 </li>
+                -->
 
                 <!-- See https://github.com/LibCrowds/libcrowds-data
                 {% if "libcrowds_data" in plugins %}
