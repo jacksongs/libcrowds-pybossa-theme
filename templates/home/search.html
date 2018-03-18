@@ -22,8 +22,6 @@
 		<div><button id="showhints" class='btn btn-sm btn-default'>Show more information</button></div>
 		<br>
 		<div id="hints" style="display:none">
-			<p>This page is updated once per week.</p>
-			<p><button id='togo' class='btn btn-sm btn-primary'>Toggle pages to go for each MP</button></p>
 			<p>The search is not case-sensitive and supports the following:</p>
 			<strong>Single term</strong>
 			<ul>
@@ -177,48 +175,136 @@ document.addEventListener("DOMContentLoaded", function(e) {
 			}, this)
 		});
 
-	function myFunction() {
 
-		// remove all previous yellow rectangles
-		d3.select("#pages").selectAll('img').style('border','0px')
+		function myFunction() {
 
-		// Remove all previous entries
-		$('#entries div div ul').html('');
+			// remove all previous yellow rectangles
+			d3.select("#pages").selectAll('img').style('border','0px')
 
-		// Make all rectangles see through
-		d3.selectAll('rect').transition().style('fill','none')
+			// Remove all previous entries
+			$('#entries div div ul').html('');
 
-		// Hide all pages from previous searches
-		$("#ulpages li").hide();
+			// Make all rectangles see through
+			d3.selectAll('rect').transition().style('fill','none')
 
-		// Make all faces the same opacity
-		$("span").fadeTo(0,1);
+			// Hide all pages from previous searches
+			$("#ulpages li").hide();
 
-		// Remove old paths
-		d3.selectAll('path').remove();
-		
-		var vals = $("#myInput").val();
+			// Make all faces the same opacity
+			$("span").fadeTo(0,1);
 
-		gtag('event', 'search', {
-		  // Event parameters
-		  'search_term':vals
-		  // ...
-		});
-
-		if ( vals.indexOf(",") != -1 ) {
+			// Remove old paths
+			d3.selectAll('path').remove();
 			
-			var codes = []
+			var vals = $("#myInput").val();
 
-			var full = []
+			gtag('event', 'search', {
+			  // Event parameters
+			  'search_term':vals
+			  // ...
+			});
 
-			for (o = 0; o < vals.split(",").length ; o++) { // for the OR search
+			if ( vals.indexOf(",") != -1 ) {
+				
+				var codes = []
 
-				var results = idx.search(vals.split(",")[o]);
+				var full = []
+
+				for (o = 0; o < vals.split(",").length ; o++) { // for the OR search
+
+					var results = idx.search(vals.split(",")[o]);
+					// codes is just the MP keys returned by the search
+
+
+					// This variable holds the mp codes as its keys, and an array of pages for each one
+
+					for (i = 0; i < results.length; i++) { 
+						full.push(list[Number(results[i].ref)])
+					};
+					
+					for (i = 0; i < full.length; i++) { 
+						if (codes.indexOf(full[i].code)==-1) { codes.push(full[i].code)}
+					};
+					
+				};
+
+			} else if ( vals.indexOf("+") != -1 ) { // for the AND search
+				
+				var codes = []
+
+				var full = []
+
+				for (o = 0; o < vals.split("+").length ; o++) {
+
+					if ( o == 0 ) { 
+						var allres = idx.search(vals.split("+")[o]); 
+						var allhave = [];
+						allres.forEach(function(item) {
+							allhave.push(item.ref);
+						});
+						
+					} else {
+						
+						var valy = vals.split("+")[o];
+						
+						var results = idx.search(valy);
+
+						allhave.slice().reverse().forEach(function(item, index, object) {
+							var match = false;
+							for (w = 0; w < results.length; w++ ) {
+							  if (item === results[w].ref) {
+								match = true;
+							  }
+							}
+							if (match == false) {
+								allhave.splice(object.length - 1 - index, 1)
+							}
+						});
+						
+					}
+
+				};
+
+				for (i = 0; i < allhave.length; i++) { 
+					full.push(list[Number(allhave[i])])
+				};
+				
+				for (i = 0; i < full.length; i++) { 
+					if (codes.indexOf(full[i].code)==-1) { codes.push(full[i].code)}
+				};
+
+			} else if ( vals.indexOf(" ") != -1 ) { // for the exact match search
+				
+				var results = []
+
+				list.forEach(function(item) {
+					if ( item.text.toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,"").replace(/\s{2,}/g," ").indexOf(vals.toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,"").replace(/\s{2,}/g," ")) != -1 ) {
+						results.push(item)
+					}
+				});
+
 				// codes is just the MP keys returned by the search
+				var codes = []
 
+				// This variable holds the mp codes as an array
+				var full = []
+				
+				for (i = 0; i < results.length; i++) { 
+					full.push(list[Number(results[i].i)])
+				};
+				
+				for (i = 0; i < full.length; i++) { 
+					if (codes.indexOf(full[i].code)==-1) { codes.push(full[i].code)}
+				};
 
-				// This variable holds the mp codes as its keys, and an array of pages for each one
+			} else { // for the ordinary single term search
+				var results = idx.search($("#myInput").val());
 
+				// codes is just the MP keys returned by the search
+				var codes = []
+
+				// This variable holds the mp codes as an array
+				var full = []
 				for (i = 0; i < results.length; i++) { 
 					full.push(list[Number(results[i].ref)])
 				};
@@ -226,340 +312,252 @@ document.addEventListener("DOMContentLoaded", function(e) {
 				for (i = 0; i < full.length; i++) { 
 					if (codes.indexOf(full[i].code)==-1) { codes.push(full[i].code)}
 				};
-				
 			};
 
-		} else if ( vals.indexOf("+") != -1 ) { // for the AND search
-			
-			var codes = []
+			// here, we add a circle to each MP returned
+			for (var i=0; i<codes.length; i++) {
+				var span = d3.select("#"+codes[i]);
+				var svg = span.select('svg');
+				svg.append('path')
+					.classed('pencil', true)
+					.style("fill","none")
+					.style("stroke","yellow")
+					.style("stroke-width","0.2px")
+					.attr('d', function() { return circlePath(
+						-0.1, 0,
+						140, 240, 
+						-0.2, 0.3)})
+					.attr('transform', function() { return circleXform(
+						0.9, 1, 
+						30, 50)});
+			};
 
-			var full = []
+			// Now let's do yellow rectangles!
 
-			for (o = 0; o < vals.split("+").length ; o++) {
+			// First, clear all the stored values in the headshots
+			d3.select("#gallery").selectAll('span').attr('data-yellows',null);
 
-				if ( o == 0 ) { 
-					var allres = idx.search(vals.split("+")[o]); 
-					var allhave = [];
-					allres.forEach(function(item) {
-						allhave.push(item.ref);
-					});
-					
+			pages = {};
+			for (var i=0; i<full.length; i++) {
+				if (full[i].code in pages) {
+					if ($.inArray(full[i].page, pages[full[i].code]) === -1 ) {
+					  pages[full[i].code].push(full[i].page);
+					}
 				} else {
-					
-					var valy = vals.split("+")[o];
-					
-					var results = idx.search(valy);
+					pages[full[i].code] = [full[i].page]
+				}
+			};
 
-					allhave.slice().reverse().forEach(function(item, index, object) {
-						var match = false;
-						for (w = 0; w < results.length; w++ ) {
-						  if (item === results[w].ref) {
-							match = true;
-						  }
+			for (var key in pages) {
+			    // check if the property/key is defined in the object itself, not in parent
+			    if (pages.hasOwnProperty(key)) {  
+			    	d3.select("#gallery").select('#'+key).attr('data-yellows',pages[key].toString());
+			    }
+			};
+
+			// and we animated these paths
+			var pa = d3.selectAll('path');
+
+			pa.style('stroke-dasharray', function(d) {
+			  var l = d3.select(this).node().getTotalLength();
+			  return l + 'px, ' + l + 'px';
+			})
+			.style('stroke-dashoffset', function(d) {
+			  return d3.select(this).node().getTotalLength() + 'px';
+			})
+			.transition()
+			.delay(function(d,i){ return 20*(i*Math.random()); }) 
+			.duration(1400)
+			.style('stroke-dashoffset', '0px');
+
+			console.log('a');
+
+			d3.json("https://s3-ap-southeast-2.amazonaws.com/burnsearch/forimg.json", function(error, forimg) {
+
+				$("span").on('click', function clickface() {
+
+					// make all pages the same opacity
+					$("#pages img").fadeTo(0,1);
+
+					//add filter to all faces
+					$(this).siblings().children("img").attr('style','filter:grayscale(100%);vertical-align:middle;width:27px;height:40px;overflow: hidden;');
+					
+					$(this).children("img").attr('style','filter:none;vertical-align:middle;width:27px;height:40px;overflow: hidden;');
+
+					// Hide all pages from previous searches
+					$("#pages div div").hide();
+
+					// All the big pages/entries
+					$("#layout div").hide();
+
+					// Get class of span
+
+					var mp = $(this).attr('id');
+
+					// Make sure the clicked face is at full opacity
+
+					$(this).fadeTo(0,1);
+
+					// This part partly hides the other faces
+					
+					$(this).siblings().fadeTo(0,0.45);
+
+					// show contribute div
+					$("#contribute div").hide();
+					$("#contribute ."+mp).fadeTo(0,1);
+
+					var pagecount = $(this).attr('data-pages');
+
+					// these create a div for each mp in the pages div
+					var imgs = d3.select('#pages').html(null).selectAll('img').data(Array(parseFloat(pagecount))).enter().append("img").attr("width",35).attr("height",40)
+					.attr("src","static/img/Loading_icon.gif")
+					.style('border','3px solid white')
+					.style('overflow','hidden');
+
+					// get yellow rectangles if they exist
+					var yellows = $(this).attr('data-yellows');
+
+					if (typeof(yellows) != 'undefined') {
+						var yellar = JSON.parse("["+yellows+"]");
+						for (i = 0; i < yellar.length; i++ ){
+							$( "#pages > img:nth-child("+yellar[i].toString()+")" ).css({"border-color": "yellow", "border-width":"3px", "border-style":"solid"});
 						}
-						if (match == false) {
-							allhave.splice(object.length - 1 - index, 1)
-						}
-					});
-					
-				}
+					};
 
-			};
+					//project id
+					var pid = $(this).attr('data-project_id');
 
-			for (i = 0; i < allhave.length; i++) { 
-				full.push(list[Number(allhave[i])])
-			};
+					for (u = 0;u<Object.keys(forimg[pid]).length;u++) {
+						var imgs = $("#pages img");
+						$(imgs[u]).attr("src","https://farm5.staticflickr.com/"+forimg[pid][u+1])
+					};
+					 
+					var lupcol = {
+						'Addition':'success',
+						'Deletion':'danger',
+						'Self':'primary',
+						'Spouse':'primary',
+						'Other':'primary',
+						'N/A':'default'
+					};
+
+					// structure of pages
+
+					d3.json("https://s3-ap-southeast-2.amazonaws.com/burnsearch/entrylayout.json", function(error, layout) {
+						
+						if (error) throw error;
+
+						// show entries when a page is clicked
+						$("#pages img").on("click", function() {
+
+							var index = $(this).index();
+
+							$(this).siblings().fadeTo(0,0.4);
+							
+							$(this).fadeTo(0,1);
+
+							// get url of image
+							var imgsrc = $(this).attr("src").replace("_m","_b");
+							var lookup1 = "#layout";
+							$(lookup1).html("<div class='col-md-6'><img width=100% src='"+imgsrc+"'></div><div class='data col-md-6'></div>");
+
+
+							if (mp in layout) {
+
+								var tasks = layout[mp][index+1];
+
+								if (typeof(tasks) != 'undefined') {
+									for (i=0;i<tasks.length;i++) {
+										var html = $("<div taskrun_id="+tasks[i]+" ></div>");
+										var htmldiv = $("<div class='conts' style='background-color:#f9f9f9;padding:10px;margin:10px'><h4>Contribution #"+(i+1)+"</h4>")
+										var ul = $("<ul>")
+										var counter = 0
+										for (o=0;o<list.length;o++){
+											if ((list[o].taskrun_id).toString() == tasks[i]) {
+												var entry = $("<li>").html(list[o].text+' <span class="pull-right"><span class="label label-'+lupcol[list[o].ad]+'">'+list[o].ad+'</span>'+' <span class="label label-'+lupcol[list[o].who]+'">'+list[o].who+'</span>'+' <span class="label label-default">'+list[o].item+'</span></span>')
+												ul.append(entry)
+												counter += 1
+											}
+										};
+										if (counter === 0) {
+											ul.append("<li><i>No entries recorded for this contribution for this page.</i></li>")
+										};
+										htmldiv.append(ul)
+										htmldiv.append("<button value='"+tasks[i]+"' class='flag btn btn-xs btn-default'>Spot a mistake?<br>Flag this contribution</button>")
+										$("#layout div.data").append(html);
+										html.append(htmldiv)
+									}
+								};
+
+							};
+
+							//flag button
+							$(".flag").on('click',function(){
+
+								var data = {'taskrun_id':$(this).val(),'user_id':'1','name':'jacksongs'};
+								data.formDataNameOrder = '["taskrun_id","user_id","name"]';
+								data.formGoogleSheetName = "responses"; // default sheet name
+								data.formGoogleSendEmail = ""; // no email by default
+
+
+								var xhr = new XMLHttpRequest();
+								var url = 'https://script.google.com/macros/s/AKfycbwjYgh-2gtOZuU9x6vh7uiR40_lBNal9WxGCss9lpAf3Snc8jk/exec';
+								xhr.open('POST', url);
+								xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+								function flaggee(a) {
+
+									a.prop('disabled', true).text('Flagged!');
+								};
+								
+								xhr.onreadystatechange = flaggee($(this))
+								xhr.send(Object.keys(data).map(function(k) {
+									return encodeURIComponent(k) + '=' + encodeURIComponent(data[k])
+									}).join('&'));
+							})
+
+						});
 			
-			for (i = 0; i < full.length; i++) { 
-				if (codes.indexOf(full[i].code)==-1) { codes.push(full[i].code)}
-			};
+					});	
 
-		} else if ( vals.indexOf(" ") != -1 ) { // for the exact match search
-			
-			var results = []
 
-			list.forEach(function(item) {
-				if ( item.text.toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,"").replace(/\s{2,}/g," ").indexOf(vals.toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,"").replace(/\s{2,}/g," ")) != -1 ) {
-					results.push(item)
-				}
-			});
-
-			// codes is just the MP keys returned by the search
-			var codes = []
-
-			// This variable holds the mp codes as an array
-			var full = []
-			
-			for (i = 0; i < results.length; i++) { 
-				full.push(list[Number(results[i].i)])
-			};
-			
-			for (i = 0; i < full.length; i++) { 
-				if (codes.indexOf(full[i].code)==-1) { codes.push(full[i].code)}
-			};
-
-		} else { // for the ordinary single term search
-			var results = idx.search($("#myInput").val());
-
-			// codes is just the MP keys returned by the search
-			var codes = []
-
-			// This variable holds the mp codes as an array
-			var full = []
-			for (i = 0; i < results.length; i++) { 
-				full.push(list[Number(results[i].ref)])
-			};
-			
-			for (i = 0; i < full.length; i++) { 
-				if (codes.indexOf(full[i].code)==-1) { codes.push(full[i].code)}
-			};
-		};
-
-		// here, we add a circle to each MP returned
-		for (var i=0; i<codes.length; i++) {
-			var span = d3.select("#"+codes[i]);
-			var svg = span.select('svg');
-			svg.append('path')
-				.classed('pencil', true)
-				.style("fill","none")
-				.style("stroke","yellow")
-				.style("stroke-width","0.2px")
-				.attr('d', function() { return circlePath(
-					-0.1, 0,
-					140, 240, 
-					-0.2, 0.3)})
-				.attr('transform', function() { return circleXform(
-					0.9, 1, 
-					30, 50)});
-		};
-
-		// Now let's do yellow rectangles!
-
-		// First, clear all the stored values in the headshots
-		d3.select("#gallery").selectAll('span').attr('data-yellows',null);
-
-		pages = {};
-		for (var i=0; i<full.length; i++) {
-			if (full[i].code in pages) {
-				if ($.inArray(full[i].page, pages[full[i].code]) === -1 ) {
-				  pages[full[i].code].push(full[i].page);
-				}
-			} else {
-				pages[full[i].code] = [full[i].page]
-			}
-		};
-
-		for (var key in pages) {
-		    // check if the property/key is defined in the object itself, not in parent
-		    if (pages.hasOwnProperty(key)) {  
-		    	d3.select("#gallery").select('#'+key).attr('data-yellows',pages[key].toString());
-		    }
-		};
-
-		// and we animated these paths
-		var pa = d3.selectAll('path');
-
-		pa.style('stroke-dasharray', function(d) {
-		  var l = d3.select(this).node().getTotalLength();
-		  return l + 'px, ' + l + 'px';
-		})
-		.style('stroke-dashoffset', function(d) {
-		  return d3.select(this).node().getTotalLength() + 'px';
-		})
-		.transition()
-		.delay(function(d,i){ return 20*(i*Math.random()); }) 
-		.duration(1400)
-		.style('stroke-dashoffset', '0px');
-
-		d3.json("https://s3-ap-southeast-2.amazonaws.com/burnsearch/forimg.json", function(error, forimg) {
-
-		
-			$("span").on('click', function clickface(thumbs) {
-
-				// make all pages the same opacity
-				$("#pages img").fadeTo(0,1);
-
-				//add filter to all faces
-				$(this).siblings().children("img").attr('style','filter:grayscale(100%);vertical-align:middle;width:27px;height:40px;overflow: hidden;');
-				
-				$(this).children("img").attr('style','filter:none;vertical-align:middle;width:27px;height:40px;overflow: hidden;');
-
-				// Hide all pages from previous searches
-				$("#pages div div").hide();
-
-				// All the big pages/entries
-				$("#layout div").hide();
-
-				// Get class of span
-
-				var mp = $(this).attr('id');
-
-				// Make sure the clicked face is at full opacity
-
-				$(this).fadeTo(0,1);
-
-				// This part partly hides the other faces
-				
-				$(this).siblings().fadeTo(0,0.45);
-
-				// show contribute div
-				$("#contribute div").hide();
-				$("#contribute ."+mp).fadeTo(0,1);
-
-				var pagecount = $(this).attr('data-pages');
-
-				// these create a div for each mp in the pages div
-				var imgs = d3.select('#pages').html(null).selectAll('img').data(Array(parseFloat(pagecount))).enter().append("img").attr("width",35).attr("height",40)
-				.attr("src","static/img/Loading_icon.gif")
-				.style('border','3px solid white')
-				.style('overflow','hidden');
-
-				// get yellow rectangles if they exist
-				var yellows = $(this).attr('data-yellows');
-
-				if (typeof(yellows) != 'undefined') {
-					var yellar = JSON.parse("["+yellows+"]");
-					for (i = 0; i < yellar.length; i++ ){
-						$( "#pages > img:nth-child("+yellar[i].toString()+")" ).css({"border-color": "yellow", "border-width":"3px", "border-style":"solid"});
-					}
-				};
-
-				//project id
-				var pid = $(this).attr('data-project_id');
-				console.log(forimg[pid],Object.keys(forimg[pid]).length);
-
-    			for (u = 0;u<Object.keys(forimg[pid]).length;u++) {
-					var imgs = $("#pages img");
-					console.log(imgs);
-					$(imgs[u]).attr("src","https://farm5.staticflickr.com/"+forimg[pid][u+1])
-					}
-				 
 				});
 
-				var lupcol = {
-					'Addition':'success',
-					'Deletion':'danger',
-					'Self':'primary',
-					'Spouse':'primary',
-					'Other':'primary',
-					'N/A':'default'
-				};
-
-				// structure of pages
-
-				d3.json("https://s3-ap-southeast-2.amazonaws.com/burnsearch/entrylayout.json", function(error, layout) {
-					
-					if (error) throw error;
-
-					// show entries when a page is clicked
-					$("#pages img").on("click", function() {
-
-						var index = $(this).index();
-
-						$(this).siblings().fadeTo(0,0.4);
-						
-						$(this).fadeTo(0,1);
-
-						// get url of image
-						var imgsrc = $(this).attr("src").replace("_m","_b");
-						var lookup1 = "#layout";
-						$(lookup1).html("<div class='col-md-6'><img width=100% src='"+imgsrc+"'></div><div class='data col-md-6'></div>");
-
-
-						if (mp in layout) {
-
-							var tasks = layout[mp][index+1];
-
-							if (typeof(tasks) != 'undefined') {
-								for (i=0;i<tasks.length;i++) {
-									var html = $("<div taskrun_id="+tasks[i]+" ></div>");
-									var htmldiv = $("<div class='conts' style='background-color:#f9f9f9;padding:10px;margin:10px'><h4>Contribution #"+(i+1)+"</h4>")
-									var ul = $("<ul>")
-									var counter = 0
-									for (o=0;o<list.length;o++){
-										if ((list[o].taskrun_id).toString() == tasks[i]) {
-											var entry = $("<li>").html(list[o].text+' <span class="pull-right"><span class="label label-'+lupcol[list[o].ad]+'">'+list[o].ad+'</span>'+' <span class="label label-'+lupcol[list[o].who]+'">'+list[o].who+'</span>'+' <span class="label label-default">'+list[o].item+'</span></span>')
-											ul.append(entry)
-											counter += 1
-										}
-									};
-									if (counter === 0) {
-										ul.append("<li><i>No entries recorded for this contribution for this page.</i></li>")
-									};
-									htmldiv.append(ul)
-									htmldiv.append("<button value='"+tasks[i]+"' class='flag btn btn-xs btn-default'>Spot a mistake?<br>Flag this contribution</button>")
-									$("#layout div.data").append(html);
-									html.append(htmldiv)
-								}
-							};
-
-						};
-
-						//flag button
-						$(".flag").on('click',function(){
-
-							var data = {'taskrun_id':$(this).val(),'user_id':'1','name':'jacksongs'};
-							data.formDataNameOrder = '["taskrun_id","user_id","name"]';
-							data.formGoogleSheetName = "responses"; // default sheet name
-							data.formGoogleSendEmail = ""; // no email by default
-
-
-							var xhr = new XMLHttpRequest();
-							var url = 'https://script.google.com/macros/s/AKfycbwjYgh-2gtOZuU9x6vh7uiR40_lBNal9WxGCss9lpAf3Snc8jk/exec';
-							xhr.open('POST', url);
-							xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-
-							function flaggee(a) {
-
-								a.prop('disabled', true).text('Flagged!');
-							};
-							
-							xhr.onreadystatechange = flaggee($(this))
-							xhr.send(Object.keys(data).map(function(k) {
-								return encodeURIComponent(k) + '=' + encodeURIComponent(data[k])
-								}).join('&'));
-						})
-
-					});
-
-									
-
-
-
-				});	
-
 			});
-	}
 
-	$( "#showhints" ).click(function() {
-	  $( "#hints" ).slideToggle( "fast", function() {
-		// Animation complete.
-	  });
-	});
+		};
 
-	myFunction(); // kick off myFunction early so we can click on faces
+		$( "#showhints" ).click(function() {
+		  $( "#hints" ).slideToggle( "fast", function() {
+			// Animation complete.
+		  });
+		});
 
-	$("#myInput").on('keyup', function (e) {
-		if (e.keyCode == 13) {
-			myFunction();
 
-		}
-	});
+		$("#myInput").on('keyup', function (e) {
+			if (e.keyCode == 13) {
+				myFunction();
 
-	//toggle pages to go
-	$("#togo").on("click",function(d) {
-		$('.below2').fadeToggle("slow");
-	});
+			}
+		});
+
+		//toggle pages to go
+		$("#togo").on("click",function(d) {
+			$('.below2').fadeToggle("slow");
+		});
+
+		myFunction(); // kick off myFunction early so we can click on faces
+
 
 	});
 
 })
 
+
 $(window).on('load', function() {
 	setTimeout(function(){
     	d3.select("#cover").transition().duration(1000).style("opacity", 0).remove();
-
-	}, 200);
+	}, 2000);
 });
 
 	</script>
@@ -601,11 +599,8 @@ $(window).on('load', function() {
 	background-color:#f2f2f2;
 	}
 
-	li {
+	#layout li {
 		margin-left:15px;
-	}
-
-	li {
 		margin-bottom: 30px;
 	}
 
