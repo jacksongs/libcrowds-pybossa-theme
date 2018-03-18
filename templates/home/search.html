@@ -72,6 +72,7 @@ document.addEventListener("DOMContentLoaded", function(e) {
 		.append("span").attr("class","img-overlay-wrap").attr("id",function(d) { return d.code })
 		.attr("data-below2",function(d) { return d.below2 })
 		.attr("data-project_id",function(d) { return d.id })
+		.attr("data-pages",function(d,i) { return d.pages })
 		.style("width","30px").style("text-align","center").style("font-size","20px").append('img')
 		.attr("src",function(d){return "static/img/thumbs/"+d.code+".jpg"})
 		.style("width","27px").style("height","40px")
@@ -126,22 +127,6 @@ document.addEventListener("DOMContentLoaded", function(e) {
 		cont.append("p").append("a")
 		.attr("href",function (d) { return "https://burntheregister.com/project/" + d.short_name +"/newtask" }).text("Contribute transcription for this MP");
 
-		// these create a div for each mp in the pages div
-		var ps = d3.select('#pages').selectAll('div').data(thumbs).enter()
-		.append("div").attr("class",function(d) { return d.code }).style("display","none");
-
-		// this adds an image for each page in the pages div, and preloads with a loading gif
-		ps.each(function (d) {
-			var ul = d3.select(this);
-			for (i = 1; i <= d.pages; i++) {
-				var imgs = ul.append("img").attr("width",35).attr("height",40)
-				imgs.attr("class","page"+i)
-				imgs.attr("src","static/img/Loading_icon.gif")
-				imgs.style('border','3px solid white');
-				imgs.style('overflow','hidden');
-			};
-	  	});
-
 	});
 
 	// this part defines the functions for the circle paths
@@ -174,11 +159,9 @@ document.addEventListener("DOMContentLoaded", function(e) {
 			+ 'rotate(' + (-θ) + ')';
 	}
 
-	// this part creates the svg viewboxes
-
 	var results = 'none';
 
-	d3.json("https://s3-ap-southeast-2.amazonaws.com/burnsearch/entries.json", function(error, list) {
+	d3.json("https://s3-ap-southeast-2.amazonaws.com/burnsearch/entriesprocessed.json", function(error, list) {
 	  	if (error) throw error;
 
 		var idx = lunr(function () {
@@ -193,53 +176,6 @@ document.addEventListener("DOMContentLoaded", function(e) {
 			this.add(doc)
 			}, this)
 		});
-
-	// structure of pages
-
-	d3.json("https://s3-ap-southeast-2.amazonaws.com/burnsearch/entrylayout.json", function(error, layout) {
-		
-		if (error) throw error;
-
-		var entrypages = d3.select("#layout").selectAll('div').data(layout).enter()
-			.append('div').attr('class',function(d){return d.code + " page" + d.page }).style("display","none").append('div').attr('class','ulul col-md-6');
-
-		var ulholders = entrypages.selectAll('div').append('div').data(function(d1){return d1.taskrun_id}).enter().append('div').attr('class',function(d,i){return d+" ulholder"});
-
-		d3.selectAll("#layout > div").insert("div",":first-child").attr('class','col-md-6').append("img")
-			.attr("src","static/img/Loading_icon.gif")
-			.style("width","100%")	;
-
-		ulholders.append('ul');
-		ulholders.append("button").text('Spot a mistake? Flag this contribution').attr('value',function(d){return d}).attr('class','flag btn btn-xs btn-default').style("font-size","12px");
-		d3.selectAll(".ulul").insert("h4",":first-child").text("Contributor transcriptions");
-		
-
-		//flag button
-		$(".flag").on('click',function(){
-
-			var data = {'taskrun_id':$(this).val(),'user_id':'1','name':'jacksongs'};
-			data.formDataNameOrder = '["taskrun_id","user_id","name"]';
-			data.formGoogleSheetName = "responses"; // default sheet name
-			data.formGoogleSendEmail = ""; // no email by default
-
-
-			var xhr = new XMLHttpRequest();
-			var url = 'https://script.google.com/macros/s/AKfycbwjYgh-2gtOZuU9x6vh7uiR40_lBNal9WxGCss9lpAf3Snc8jk/exec';
-			xhr.open('POST', url);
-			xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-
-			function flaggee(a) {
-
-				a.prop('disabled', true).text('Flagged!');
-			};
-			
-			xhr.onreadystatechange = flaggee($(this))
-			xhr.send(Object.keys(data).map(function(k) {
-				return encodeURIComponent(k) + '=' + encodeURIComponent(data[k])
-				}).join('&'));
-		})
-
-	});			
 
 	function myFunction() {
 
@@ -256,7 +192,7 @@ document.addEventListener("DOMContentLoaded", function(e) {
 		$("#ulpages li").hide();
 
 		// Make all faces the same opacity
-		$("span").fadeTo("fast",1);
+		$("span").fadeTo(0,1);
 
 		// Remove old paths
 		d3.selectAll('path').remove();
@@ -398,9 +334,26 @@ document.addEventListener("DOMContentLoaded", function(e) {
 		};
 
 		// Now let's do yellow rectangles!
+
+		// First, clear all the stored values in the headshots
+		d3.select("#gallery").selectAll('span').attr('data-yellows',null);
+
+		pages = {};
 		for (var i=0; i<full.length; i++) {
-			var img = d3.select("#pages").select("."+full[i].code).select('img.page'+full[i].page);
-			img.transition().style('border','3px solid yellow');
+			if (full[i].code in pages) {
+				if ($.inArray(full[i].page, pages[full[i].code]) === -1 ) {
+				  pages[full[i].code].push(full[i].page);
+				}
+			} else {
+				pages[full[i].code] = [full[i].page]
+			}
+		};
+
+		for (var key in pages) {
+		    // check if the property/key is defined in the object itself, not in parent
+		    if (pages.hasOwnProperty(key)) {  
+		    	d3.select("#gallery").select('#'+key).attr('data-yellows',pages[key].toString());
+		    }
 		};
 
 		// and we animated these paths
@@ -417,7 +370,163 @@ document.addEventListener("DOMContentLoaded", function(e) {
 		.delay(function(d,i){ return 20*(i*Math.random()); }) 
 		.duration(1400)
 		.style('stroke-dashoffset', '0px');
-		  
+		
+		$("span").on('click', function clickface(thumbs) {
+
+			// make all pages the same opacity
+			$("#pages img").fadeTo(0,1);
+
+			//add filter to all faces
+			$(this).siblings().children("img").attr('style','filter:grayscale(100%);vertical-align:middle;width:27px;height:40px;overflow: hidden;');
+			
+			$(this).children("img").attr('style','filter:none;vertical-align:middle;width:27px;height:40px;overflow: hidden;');
+
+			// Hide all pages from previous searches
+			$("#pages div div").hide();
+
+			// All the big pages/entries
+			$("#layout div").hide();
+
+			// Get class of span
+
+			var mp = $(this).attr('id');
+
+			// Make sure the clicked face is at full opacity
+
+			$(this).fadeTo(0,1);
+
+			// This part partly hides the other faces
+			
+			$(this).siblings().fadeTo(0,0.45);
+
+			// show contribute div
+			$("#contribute div").hide();
+			$("#contribute ."+mp).fadeTo(0,1);
+
+			var pagecount = $(this).attr('data-pages');
+
+			// these create a div for each mp in the pages div
+			var imgs = d3.select('#pages').html(null).selectAll('img').data(Array(parseFloat(pagecount))).enter().append("img").attr("width",35).attr("height",40)
+			.attr("src","static/img/Loading_icon.gif")
+			.style('border','3px solid white')
+			.style('overflow','hidden');
+
+			// get yellow rectangles if they exist
+			var yellows = $(this).attr('data-yellows');
+
+			if (typeof(yellows) != 'undefined') {
+				var yellar = JSON.parse("["+yellows+"]");
+				for (i = 0; i < yellar.length; i++ ){
+					$( "#pages > img:nth-child("+yellar[i].toString()+")" ).css({"border-color": "yellow", "border-width":"3px", "border-style":"solid"});
+				}
+			};
+
+			//project id
+			var pid = $(this).attr('data-project_id');
+
+			var jqxhr = $.get( "https://burntheregister.com/api/task?limit=100&project_id="+pid, function(d) {
+			  for (u = 0;u<d.length;u++) {
+				var imgs = $("#pages img")
+				$(imgs[u]).attr("src",d[u].info.url_m)
+				}
+			 
+			});
+
+			var lupcol = {
+				'Addition':'success',
+				'Deletion':'danger',
+				'Self':'primary',
+				'Spouse':'primary',
+				'Other':'primary',
+				'N/A':'default'
+			};
+
+			// structure of pages
+
+			d3.json("https://s3-ap-southeast-2.amazonaws.com/burnsearch/entrylayout.json", function(error, layout) {
+				
+				if (error) throw error;
+
+				// show entries when a page is clicked
+				$("#pages img").on("click", function() {
+
+					var index = $(this).index();
+
+					$(this).siblings().fadeTo(0,0.4);
+					
+					$(this).fadeTo(0,1);
+
+					// get url of image
+					var imgsrc = $(this).attr("src").replace("_m","_b");
+					var lookup1 = "#layout";
+					$(lookup1).html("<div class='col-md-6'><img width=100% src='"+imgsrc+"'></div><div class='data col-md-6'></div>");
+
+
+					if (mp in layout) {
+
+						var tasks = layout[mp][index+1];
+
+						if (typeof(tasks) != 'undefined') {
+							for (i=0;i<tasks.length;i++) {
+								var html = $("<div taskrun_id="+tasks[i]+" ></div>");
+								var htmldiv = $("<div class='conts' style='background-color:#f9f9f9;padding:10px;margin:10px'><h4>Contribution #"+(i+1)+"</h4>")
+								var ul = $("<ul>")
+								var counter = 0
+								for (o=0;o<list.length;o++){
+									if ((list[o].taskrun_id).toString() == tasks[i]) {
+										var entry = $("<li>").html(list[o].text+' <span class="pull-right"><span class="label label-'+lupcol[list[o].ad]+'">'+list[o].ad+'</span>'+' <span class="label label-'+lupcol[list[o].who]+'">'+list[o].who+'</span>'+' <span class="label label-default">'+list[o].item+'</span></span>')
+										ul.append(entry)
+										counter += 1
+									}
+								};
+								if (counter === 0) {
+									ul.append("<li><i>No entries recorded for this contribution for this page.</i></li>")
+								};
+								htmldiv.append(ul)
+								htmldiv.append("<button value='"+tasks[i]+"' class='flag btn btn-xs btn-default'>Spot a mistake?<br>Flag this contribution</button>")
+								$("#layout div.data").append(html);
+								html.append(htmldiv)
+							}
+						};
+
+					};
+
+					//flag button
+					$(".flag").on('click',function(){
+
+						var data = {'taskrun_id':$(this).val(),'user_id':'1','name':'jacksongs'};
+						data.formDataNameOrder = '["taskrun_id","user_id","name"]';
+						data.formGoogleSheetName = "responses"; // default sheet name
+						data.formGoogleSendEmail = ""; // no email by default
+
+
+						var xhr = new XMLHttpRequest();
+						var url = 'https://script.google.com/macros/s/AKfycbwjYgh-2gtOZuU9x6vh7uiR40_lBNal9WxGCss9lpAf3Snc8jk/exec';
+						xhr.open('POST', url);
+						xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+						function flaggee(a) {
+
+							a.prop('disabled', true).text('Flagged!');
+						};
+						
+						xhr.onreadystatechange = flaggee($(this))
+						xhr.send(Object.keys(data).map(function(k) {
+							return encodeURIComponent(k) + '=' + encodeURIComponent(data[k])
+							}).join('&'));
+					})
+
+				});
+
+								
+
+
+
+			});	
+
+
+		});
+
 	}
 
 	$( "#showhints" ).click(function() {
@@ -426,110 +535,13 @@ document.addEventListener("DOMContentLoaded", function(e) {
 	  });
 	});
 
+	myFunction(); // kick off myFunction early so we can click on faces
+
 	$("#myInput").on('keyup', function (e) {
 		if (e.keyCode == 13) {
 			myFunction();
 
 		}
-	});
-
-	$("span").on('click', function clickface() {
-
-		// make all pages the same opacity
-		$("#pages img").fadeTo("fast",1);
-
-		//add filter to all faces
-		$(this).siblings().children("img").attr('style','filter:grayscale(100%);vertical-align:middle;width:27px;height:40px;overflow: hidden;');
-		
-		$(this).children("img").attr('style','filter:none;vertical-align:middle;width:27px;height:40px;overflow: hidden;');
-
-		// Hide all pages from previous searches
-		$("#pages div div").hide();
-
-		// All the big pages/entries
-		$("#layout div").hide();
-
-		// Get class of span
-
-		var mp = $(this).attr('id');
-
-		// Make sure the clicked face is at full opacity
-
-		$(this).fadeTo("fast",1);
-
-		// This part partly hides the other faces
-		
-		$(this).siblings().fadeTo("slow", 0.45);
-
-		// show contribute div
-		$("#contribute div").hide();
-		$("#contribute ."+mp).fadeTo("fast",1);
-
-		// show page div
-		$("#pages div").hide();
-		$("#pages div."+mp).fadeTo("fast",1);
-
-		//project id
-		var pid = $(this).attr('data-project_id');
-
-		var jqxhr = $.get( "https://burntheregister.com/api/task?limit=100&project_id="+pid, function(d) {
-		  for (u = 0;u<d.length;u++) {
-			var imgs = $("#pages div."+mp+ " img")
-			$(imgs[u]).attr("src",d[u].info.url_m)
-			}
-		 
-		});
-
-		var lupcol = {
-			'Addition':'success',
-			'Deletion':'danger',
-			'Self':'primary',
-			'Spouse':'warning',
-			'Other':'info',
-			'N/A':'default'
-		}
-
-		list.forEach(function(item){
-			if (item.code == mp) {
-				var mplookup = "#layout div."+item.code+".page"+item.page+" div."+item.taskrun_id+" > ul"
-				var entry = $("<li>").html(item.text+' <span class="label label-'+lupcol[item.ad]+'">'+item.ad+'</span>'+' <span class="label label-'+lupcol[item.who]+'">'+item.who+'</span>'+' <span class="label label-default">'+item.item+'</span>')
-				//.append("span").attr("class","badge badge-pill badge-primary").text(item.text+", "+item.ad+"</
-				//span>, "+item.who+", "+item.item+", "+item.match).attr('class',item.i);
-				var lookedup = $(mplookup);
-				lookedup.append(entry);
-			}
-		})
-
-		var $target = $('html,body'); 
-		$target.animate({scrollTop: $target.height()}, 2000);
-
-
-	});
-
-	// show entries when a page is clicked
-	$("#pages img").on("click", function() {
-
-		$(this).siblings().fadeTo("fast",0.4);
-		
-		$(this).fadeTo("fast",1);
-
-		// get url of image
-		var imgsrc = $(this).attr("src").replace("_m","_b");
-		var lookup1 = "#layout div."+String($(this).parent().attr("class"))+"."+String($(this).attr("class"))+" div img";
-		$(lookup1).attr("src",imgsrc);
-
-		var lookup = "#layout div."+String($(this).parent().attr("class"))+"."+String($(this).attr("class"));
-		$(lookup).siblings().hide();
-		$(lookup).show();
-		$(lookup).children().show();
-		$(lookup).children().children().show();
-		
-		// check if uls are empty, if so replace them with 'no entries recorded for this page for this contribution'
-		//$(lookup + ' ul:empty').append($('<i>No entries recorded for this page in this contribution</i>'));
-	
-		var $target = $('html,body'); 
-		$target.animate({scrollTop: $target.height()}, 2000);
-
 	});
 
 	//toggle pages to go
@@ -544,7 +556,8 @@ document.addEventListener("DOMContentLoaded", function(e) {
 $(window).on('load', function() {
 	setTimeout(function(){
     	d3.select("#cover").transition().duration(1000).style("opacity", 0).remove();
-	}, 2000);
+
+	}, 200);
 });
 
 	</script>
@@ -590,8 +603,8 @@ $(window).on('load', function() {
 		margin-left:15px;
 	}
 
-	.ulholder li {
-		margin-bottom: 5px;
+	li {
+		margin-bottom: 30px;
 	}
 
 	#cover {position: fixed; height: 100%; width: 100%; top:0; left: 0; background: #ffffff; z-index:9999; text-align: center}
