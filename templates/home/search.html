@@ -72,7 +72,7 @@ document.addEventListener("DOMContentLoaded", function(e) {
 		.attr("data-project_id",function(d) { return d.id })
 		.attr("data-pages",function(d,i) { return d.pages })
 		.style("width","30px").style("text-align","center").style("font-size","20px").append('img')
-		.attr("src",function(d){return "static/img/thumbs/"+d.code+".jpg"})
+		.attr("src",function(d){return "static/img/thumbs/"+d.short_name+".jpg"})
 		.style("width","27px").style("height","40px")
 		.style("vertical-align","middle").style("filter","grayscale(100%)")
 		.style("overflow","hidden");
