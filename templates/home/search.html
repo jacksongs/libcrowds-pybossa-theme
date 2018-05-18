@@ -72,7 +72,7 @@ document.addEventListener("DOMContentLoaded", function(e) {
 		.attr("data-project_id",function(d) { return d.id })
 		.attr("data-pages",function(d,i) { return d.pages })
 		.style("width","30px").style("text-align","center").style("font-size","20px").append('img')
-		.attr("src",function(d){return "static/img/thumbs/"+d.short_name+".jpg"})
+		.attr("src",function(d){return "static/img/thumbs/"+d.code+".jpg"})
 		.style("width","27px").style("height","40px")
 		.style("vertical-align","middle").style("filter","grayscale(100%)")
 		.style("overflow","hidden");
@@ -376,6 +376,8 @@ document.addEventListener("DOMContentLoaded", function(e) {
 
 				$("span").on('click', function clickface() {
 
+					console.log('clickface!');
+
 					// make all pages the same opacity
 					$("#pages img").fadeTo(0,1);
 
@@ -392,7 +394,9 @@ document.addEventListener("DOMContentLoaded", function(e) {
 
 					// Get class of span
 
-					var mp = $(this).attr('id');
+					var mp = String($(this).attr('data-project_id'));
+
+					console.log(mp);
 
 					// Make sure the clicked face is at full opacity
 
@@ -408,7 +412,7 @@ document.addEventListener("DOMContentLoaded", function(e) {
 
 					var pagecount = $(this).attr('data-pages');
 
-					// these create a div for each mp in the pages div
+					// these create a div for each img in the pages div
 					var imgs = d3.select('#pages').html(null).selectAll('img').data(Array(parseFloat(pagecount))).enter().append("img").attr("width",35).attr("height",40)
 					.attr("src","static/img/Loading_icon.gif")
 					.style('border','3px solid white')
@@ -427,9 +431,18 @@ document.addEventListener("DOMContentLoaded", function(e) {
 					//project id
 					var pid = $(this).attr('data-project_id');
 
-					for (u = 0;u<Object.keys(forimg[pid]).length;u++) {
-						var imgs = $("#pages img");
-						$(imgs[u]).attr("src","https://farm5.staticflickr.com/"+forimg[pid][u+1])
+					
+					// switch for joyce and alexander
+					var imgs = $("#pages img");
+
+					if (pid == 3 || 87) {
+						for (l = 0;l<imgs.length;l++) {
+							$(imgs[l]).attr("src","https://farm5.staticflickr.com/"+forimg[pid][l+1])	
+						};
+					} else {
+						for (u = 0;u<Object.keys(forimg[pid]).length;u++) {
+							$(imgs[u]).attr("src","https://farm5.staticflickr.com/"+forimg[pid][u+1])
+						}							
 					};
 					 
 					var lupcol = {
@@ -450,6 +463,8 @@ document.addEventListener("DOMContentLoaded", function(e) {
 						// show entries when a page is clicked
 						$("#pages img").on("click", function() {
 
+							console.log('clickpage!');
+
 							var index = $(this).index();
 
 							$(this).siblings().fadeTo(0,0.4);
@@ -461,10 +476,16 @@ document.addEventListener("DOMContentLoaded", function(e) {
 							var lookup1 = "#layout";
 							$(lookup1).html("<div class='col-md-6'><img width=100% src='"+imgsrc+"'></div><div class='data col-md-6'></div>");
 
+							console.log(mp);
+							console.log(mp in layout);
 
 							if (mp in layout) {
 
+								console.log('mp in layout!');
+
 								var tasks = layout[mp][index+1];
+
+								console.log(tasks);
 
 								if (typeof(tasks) != 'undefined') {
 									for (i=0;i<tasks.length;i++) {
