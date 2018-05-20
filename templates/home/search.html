@@ -432,19 +432,12 @@ document.addEventListener("DOMContentLoaded", function(e) {
 					var pid = $(this).attr('data-project_id');
 
 					
-					// switch for joyce and alexander
 					var imgs = $("#pages img");
 
-					if (pid == 3 || 87) {
-						for (l = 0;l<imgs.length;l++) {
-							$(imgs[l]).attr("src","https://farm5.staticflickr.com/"+forimg[pid][l+1])	
-						};
-					} else {
-						for (u = 0;u<Object.keys(forimg[pid]).length;u++) {
-							$(imgs[u]).attr("src","https://farm5.staticflickr.com/"+forimg[pid][u+1])
-						}							
-					};
-					 
+					for (u = 0;u<Object.keys(forimg[pid]).length;u++) {
+						$(imgs[u]).attr("src","https://farm5.staticflickr.com/"+forimg[pid][u+1])
+					};							
+
 					var lupcol = {
 						'Addition':'success',
 						'Deletion':'danger',
