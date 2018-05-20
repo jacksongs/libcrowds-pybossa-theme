@@ -34,6 +34,8 @@
 				<li>AND operator - search for multiple terms in a single entry by separating words with plus signs eg: Qantas+club</li>
 				<li>OR operator - search for multiple terms by separating words with commas eg: golf,tennis,cycling</li>
 			</ul>
+			<strong>Prefer a CSV?</strong>
+			<p>You can grab that <a href="https://s3-ap-southeast-2.amazonaws.com/burnsearch/BURN.csv">here</a>.
 		</div>
 	</div>
 
@@ -88,8 +90,8 @@ document.addEventListener("DOMContentLoaded", function(e) {
 			div.transition()		
 			.duration(200)		
 			.style("opacity", .9);		
-			div.html(d.name).style("left", (d3.event.pageX - 60) + "px")		
-			.style("top", (d3.event.pageY - 120) + "px");	
+			div.html(d.name).style("left", (d3.event.pageX - 150) + "px")		
+			.style("top", (d3.event.pageY - 200) + "px");	
 			})
 
 		d3.select('#gallery').on("mouseout", function(d){
@@ -116,14 +118,14 @@ document.addEventListener("DOMContentLoaded", function(e) {
 
 		// these create a div for each mp in the contribute div
 		var cont = d3.select("#contribute").selectAll('div').data(thumbs).enter()
-		.append("div").attr("class",function(d) { return d.code }).style("display","none");
+		.append("div").attr("class",function(d) { return d.id }).style("display","none");
 
 		// and we add a heading with the name of the mp
 		cont.append("h3").text(function (d) { return d.name });
 
 		// and a link to the contribute page
 		cont.append("p").append("a")
-		.attr("href",function (d) { return "https://burntheregister.com/project/" + d.short_name +"/newtask" }).text("Contribute transcription for this MP");
+		.attr("href",function (d) { return "https://burntheregister.com/project/" + d.code +"/newtask" }).text("Contribute transcription for this MP");
 
 	});
 
@@ -370,13 +372,9 @@ document.addEventListener("DOMContentLoaded", function(e) {
 			.duration(1400)
 			.style('stroke-dashoffset', '0px');
 
-			console.log('a');
-
 			d3.json("https://s3-ap-southeast-2.amazonaws.com/burnsearch/forimg.json", function(error, forimg) {
 
 				$("span").on('click', function clickface() {
-
-					console.log('clickface!');
 
 					// make all pages the same opacity
 					$("#pages img").fadeTo(0,1);
@@ -395,8 +393,6 @@ document.addEventListener("DOMContentLoaded", function(e) {
 					// Get class of span
 
 					var mp = String($(this).attr('data-project_id'));
-
-					console.log(mp);
 
 					// Make sure the clicked face is at full opacity
 
@@ -456,8 +452,6 @@ document.addEventListener("DOMContentLoaded", function(e) {
 						// show entries when a page is clicked
 						$("#pages img").on("click", function() {
 
-							console.log('clickpage!');
-
 							var index = $(this).index();
 
 							$(this).siblings().fadeTo(0,0.4);
@@ -469,16 +463,9 @@ document.addEventListener("DOMContentLoaded", function(e) {
 							var lookup1 = "#layout";
 							$(lookup1).html("<div class='col-md-6'><img width=100% src='"+imgsrc+"'></div><div class='data col-md-6'></div>");
 
-							console.log(mp);
-							console.log(mp in layout);
-
 							if (mp in layout) {
 
-								console.log('mp in layout!');
-
 								var tasks = layout[mp][index+1];
-
-								console.log(tasks);
 
 								if (typeof(tasks) != 'undefined') {
 									for (i=0;i<tasks.length;i++) {
