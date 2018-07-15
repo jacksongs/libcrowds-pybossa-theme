@@ -5,7 +5,12 @@
 {% from "_formhelpers.html" import render_field %}
 
     <div class="col-xs-12 col-sm-6 col-sm-offset-3">
-        <h2 class="text-center">Create an account</h2>
+        <h2 class="text-center">See how you contribute</h2>
+            <p class="text-center muted">
+                Watch this 9 minute video. Still got questions? Register, then ask in the <strong><a href="https://talk.burntheregister.com">forum</a></strong>.
+            </p>
+        <iframe width="100%" height="415" src="https://www.youtube.com/embed/gRH9LYrl-JM" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+        <h2 class="text-center">Then create an account</h2>
         <form method="post" role="form" action="{{ url_for('account.register') }}">
             {{ form.hidden_tag() }}
             <fieldset>
