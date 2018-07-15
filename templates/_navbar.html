@@ -118,6 +118,7 @@
                     </ul>
                 </li>
                 {% else %}
+                <li class="nav-link"><a href="{{ url_for('account.register') }}">Register</a></li>
                 <li class="nav-link"><a href="{{ url_for('account.signin') }}">Sign in</a></li>
                 {% endif %}
             </ul>
