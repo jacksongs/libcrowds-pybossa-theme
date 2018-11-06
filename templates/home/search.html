@@ -82,15 +82,14 @@ document.addEventListener("DOMContentLoaded", function(e) {
 
 		// Define the div for the tooltip
 		var div = d3.select("#gallery").append("span")	
-			.attr("class", "tooltip")
-			.style("float","right")				
+			.attr("class", "tooltip")		
 			.style("opacity", 0);
 
 		span.on("mouseover", function(d) {		
 			div.transition()		
 			.duration(200)		
 			.style("opacity", .9);		
-			div.html(d.name).style("left", (d3.event.pageX - 450) + "px")		
+			div.html(d.name).style("left", (d3.event.pageX) + "px")		
 			.style("top", (d3.event.pageY - 200) + "px");	
 			})
 
